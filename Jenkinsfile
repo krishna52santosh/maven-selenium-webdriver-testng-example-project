@@ -15,7 +15,13 @@ pipeline {
             bat "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=DemoPrj -Dsonar.projectName=DemoPrj -Dsonar.sources=src -Dsonar.java.binaries=target"
         }
         timeout(time: 1, unit: 'MINUTES') {
-            waitForQualityGate abortPipeline: true
+            //waitForQualityGate abortPipeline: true
+			script {
+                    def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+                    if (qg.status != 'OK') {
+                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                    }
+                }
         }
 	  }
 	  
