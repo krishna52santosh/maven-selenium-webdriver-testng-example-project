@@ -14,7 +14,7 @@ pipeline {
         withSonarQubeEnv('SonarLocal') {
             bat "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=DemoPrj -Dsonar.projectName=DemoPrj -Dsonar.sources=src -Dsonar.java.binaries=target"
         }
-        timeout(time: 4, unit: 'MINUTES') {
+        timeout(time: 1, unit: 'MINUTES') {
             waitForQualityGate abortPipeline: true
         }
 	  }
