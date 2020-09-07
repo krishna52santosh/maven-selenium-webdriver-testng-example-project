@@ -14,12 +14,17 @@ pipeline {
         withSonarQubeEnv('SonarLocal') {
             bat "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=DemoPrj -Dsonar.projectName=DemoPrj -Dsonar.sources=src -Dsonar.java.binaries=target"
         }
-        timeout(time: 10, unit: 'MINUTES') {
+        timeout(time: 4, unit: 'MINUTES') {
             waitForQualityGate abortPipeline: true
         }
 	  }
 	  
 
     }
+	stage('SeleniumTest'){
+	  steps {
+        bat 'mvn test'
+      }
+	}
   }
 }
