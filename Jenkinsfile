@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        bat 'mvn clean compile'
+        bat 'mvn clean install'
       }
     }
 	stage('Sonar') {
@@ -11,7 +11,7 @@ pipeline {
         scannerHome = tool 'SonarScanner'
 		}
 	  steps {
-        withSonarQubeEnv('sonarqube') {
+        withSonarQubeEnv('SonarLocal') {
             sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=DemoPrj -Dsonar.projectName=DemoPrj -Dsonar.sources=src"
         }
         timeout(time: 10, unit: 'MINUTES') {
