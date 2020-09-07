@@ -31,7 +31,7 @@ pipeline {
     }
 	stage('SeleniumTest'){
 	  steps {
-		bat 'TIMEOUT 10' 
+	sleep(time: 10, unit: "SECONDS") 
         bat 'mvn test'
       }
 	}
