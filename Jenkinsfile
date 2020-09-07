@@ -6,6 +6,7 @@ pipeline {
         bat 'mvn clean compile'
       }
     }
+	parallel {
 	stage('Sonar') {
 		environment {
         scannerHome = tool 'SonarScanner'
@@ -32,5 +33,6 @@ pipeline {
         bat 'mvn test'
       }
 	}
+  }
   }
 }
