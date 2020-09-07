@@ -6,6 +6,7 @@ pipeline {
         bat 'mvn clean compile'
       }
     }
+	stage('parallel execution'){
 	parallel {
 	stage('Sonar') {
 		environment {
@@ -33,6 +34,7 @@ pipeline {
         bat 'mvn test'
       }
 	}
+  }
   }
   }
 }
