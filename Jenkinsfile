@@ -16,7 +16,7 @@ pipeline {
         withSonarQubeEnv('SonarLocal') {
             bat "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=DemoPrj -Dsonar.projectName=DemoPrj -Dsonar.sources=src -Dsonar.java.binaries=target"
         }
-        timeout(time: 1, unit: 'MINUTES') {
+        timeout(time: 10, unit: 'SECONDS') {
             //waitForQualityGate abortPipeline: true
 			script {
                     def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
