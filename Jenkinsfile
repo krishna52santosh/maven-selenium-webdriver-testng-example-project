@@ -39,7 +39,14 @@ pipeline {
   }
   post {
 	always {
-		junit 'target\surefire-reports\index.html
+		publishHTML (target: [
+      allowMissing: false,
+      alwaysLinkToLastBuild: false,
+      keepAll: true,
+      reportDir: 'target/surefire-reports',
+      reportFiles: 'index.html',
+      reportName: "Test Report"
+    ])
 		}
 	}
   }
