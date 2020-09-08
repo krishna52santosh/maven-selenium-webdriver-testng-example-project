@@ -45,7 +45,7 @@ pipeline {
         stage('SeleniumTest') {
           agent {
             node {
-              label 'slave1'
+              label 'Slave1'
             }
 
           }
@@ -60,15 +60,8 @@ pipeline {
   }
   post {
     success {
-      publishHTML([
-                      allowMissing: false,
-                      alwaysLinkToLastBuild: false,
-                      keepAll: true,
-                      reportDir: 'surefire-reports',
-                      reportFiles: 'index.html',
-                      reportName: 'Test Report'
-                    ])
-      }
-
+      publishHTML(allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'surefire-reports', reportFiles: 'index.html', reportName: 'Test Report')
     }
+
   }
+}
