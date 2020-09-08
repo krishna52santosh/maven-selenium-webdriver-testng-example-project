@@ -33,7 +33,7 @@ pipeline {
 	  steps {
 		//bat 'TIMEOUT 10' 
         bat 'mvn test'
-		bat '${WORKSPACE}\target\surefire-reports\index.html ${WORKSPACE}\target'
+		//bat '${WORKSPACE}\target\surefire-reports\index.html ${WORKSPACE}\target'
 		  
       }
 	  
@@ -44,7 +44,11 @@ pipeline {
    
   }	
   post {
-        success {
+		always{
+			script {
+            bat 'echo postscript'
+			}
+		success {
           // publish html
           publishHTML target: [
               allowMissing: false,
@@ -55,6 +59,8 @@ pipeline {
               reportName: 'Test Report'
             ]
         }
+		}
+        
       }
 	
 }
