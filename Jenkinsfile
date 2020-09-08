@@ -33,21 +33,27 @@ pipeline {
 	  steps {
 		//bat 'TIMEOUT 10' 
         bat 'mvn test'
-		 publishHTML target: [
-            allowMissing: false,
-            alwaysLinkToLastBuild: false,
-            keepAll: true,
-            reportDir: 'surefire-reports',
-            reportFiles: 'index.html',
-            reportName: 'Test Report'
-          ]
 		  
       }
 	  
 	}
   }
   }
+  
    
   }	
+  post {
+        success {
+          // publish html
+          publishHTML target: [
+              allowMissing: false,
+              alwaysLinkToLastBuild: false,
+              keepAll: true,
+              reportDir: 'er-testng-example-project_master\target\surefire-reports',
+              reportFiles: 'index.html',
+              reportName: 'Test Report'
+            ]
+        }
+      }
 	
 }
