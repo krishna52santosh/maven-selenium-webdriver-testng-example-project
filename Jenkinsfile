@@ -2,6 +2,9 @@ pipeline {
   agent any
   stages {
     stage('Build') {
+	    agent {
+                        label "master"
+                    }
       steps {
         bat 'mvn clean compile'
       }
@@ -10,7 +13,7 @@ pipeline {
 	parallel {
 	stage('Sonar') {
 		 agent {
-                        label "Slave1"
+                        label "master"
                     }
 		environment {
         scannerHome = tool 'SonarScanner'
@@ -34,7 +37,7 @@ pipeline {
     }
 	stage('SeleniumTest'){
 		 agent {
-                        label "master"
+                        label "Slave1"
                     }
 	  steps {
 		//bat 'TIMEOUT 10' 
