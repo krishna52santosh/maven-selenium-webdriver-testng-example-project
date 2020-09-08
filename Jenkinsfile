@@ -33,19 +33,7 @@ pipeline {
 	  steps {
 		//bat 'TIMEOUT 10' 
         bat 'mvn test'
-		  
-      }
-	  
-	}
-  }
-  }
-  stage ('Test Report') {
-      steps {
-        // run tests with coverage
-        //sh 'bundle exec rake spec'
-
-        // publish html
-        publishHTML target: [
+		 publishHTML target: [
             allowMissing: false,
             alwaysLinkToLastBuild: false,
             keepAll: true,
@@ -53,8 +41,13 @@ pipeline {
             reportFiles: 'index.html',
             reportName: 'Test Report'
           ]
+		  
       }
-    } 
+	  
+	}
+  }
+  }
+   
   }	
 	
 }
