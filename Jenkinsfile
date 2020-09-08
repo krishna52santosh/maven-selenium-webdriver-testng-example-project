@@ -33,7 +33,9 @@ pipeline {
 	  steps {
 		bat 'sleep 10' 
         bat 'mvn test'
-		  publishHTML (target: [
+		  
+      }
+	  publishHTML (target: [
       allowMissing: false,
       alwaysLinkToLastBuild: false,
       keepAll: true,
@@ -41,7 +43,6 @@ pipeline {
       reportFiles: 'index.html',
       reportName: "Test Report"
     ])
-      }
 	}
   }
   }
