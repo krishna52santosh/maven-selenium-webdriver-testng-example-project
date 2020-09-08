@@ -9,6 +9,9 @@ pipeline {
 	stage('parallel execution'){
 	parallel {
 	stage('Sonar') {
+		 agent {
+                        label "Slave1"
+                    }
 		environment {
         scannerHome = tool 'SonarScanner'
 		}
@@ -30,6 +33,9 @@ pipeline {
 
     }
 	stage('SeleniumTest'){
+		 agent {
+                        label "master"
+                    }
 	  steps {
 		//bat 'TIMEOUT 10' 
         bat 'mvn test'
