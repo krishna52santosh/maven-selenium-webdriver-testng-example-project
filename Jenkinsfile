@@ -15,12 +15,7 @@ pipeline {
     stage('parallel execution') {
       parallel {
         stage('Sonar') {
-          agent {
-            node {
-              label 'master'
-            }
-
-          }
+          agent any
           environment {
             scannerHome = 'SonarScanner'
           }
@@ -43,12 +38,7 @@ pipeline {
         }
 
         stage('SeleniumTest') {
-          agent {
-            node {
-              label 'Slave1'
-            }
-
-          }
+          agent any
           steps {
             bat 'mvn test'
           }
