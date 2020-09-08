@@ -35,17 +35,26 @@ pipeline {
         bat 'mvn test'
 		  
       }
-	  publishHTML (target: [
-      allowMissing: false,
-      alwaysLinkToLastBuild: false,
-      keepAll: true,
-      reportDir: 'target/surefire-reports',
-      reportFiles: 'index.html',
-      reportName: "Test Report"
-    ])
+	  
 	}
   }
   }
+  stage ('Test Report') {
+      steps {
+        // run tests with coverage
+        //sh 'bundle exec rake spec'
+
+        // publish html
+        publishHTML target: [
+            allowMissing: false,
+            alwaysLinkToLastBuild: false,
+            keepAll: true,
+            reportDir: 'target/surefire-reports',
+            reportFiles: 'index.html',
+            reportName: 'Test Report'
+          ]
+      }
+    } 
   }	
 	
 }
