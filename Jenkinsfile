@@ -49,7 +49,7 @@ pipeline {
               allowMissing: false,
               alwaysLinkToLastBuild: false,
               keepAll: true,
-              reportDir: 'er-testng-example-project_master\target\surefire-reports',
+              reportDir: 'target\surefire-reports',
               reportFiles: 'index.html',
               reportName: 'Test Report'
             ]
