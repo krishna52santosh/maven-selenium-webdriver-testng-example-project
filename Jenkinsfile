@@ -45,22 +45,17 @@ pipeline {
   }	
   post {
 		always{
-			script {
-            bat 'echo postscript'
-			}
-		
-		}
-	  success {
-          // publish html
-          publishHTML target: [
+			
+		publishHTML (target: [
               allowMissing: false,
               alwaysLinkToLastBuild: false,
               keepAll: true,
-              reportDir: 'target',
+              reportDir: 'target\\surefire-reports\\',
               reportFiles: 'index.html',
               reportName: 'Test Report'
-            ]
-        }
+            ])
+		}
+	
         
       }
 	
