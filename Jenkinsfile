@@ -48,7 +48,9 @@ pipeline {
 			script {
             bat 'echo postscript'
 			}
-		success {
+		
+		}
+	  success {
           // publish html
           publishHTML target: [
               allowMissing: false,
@@ -59,7 +61,6 @@ pipeline {
               reportName: 'Test Report'
             ]
         }
-		}
         
       }
 	
