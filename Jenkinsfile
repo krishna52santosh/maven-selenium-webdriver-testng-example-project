@@ -33,7 +33,7 @@ pipeline {
 	  steps {
 		//bat 'TIMEOUT 10' 
         bat 'mvn test'
-		bat 'C:\Softwares\Slave1\workspace\DemoPrj\target\surefire-reports\index.html C:\Softwares\Slave1\workspace\DemoPrj\target'
+		bat '${WORKSPACE}\target\surefire-reports\index.html ${WORKSPACE}\target'
 		  
       }
 	  
