@@ -30,8 +30,10 @@ pipeline {
 			}
 		} catch(err) {
 			def user = err.getCauses()[0].getUser()
+			echo $didTimeout
 			if('SYSTEM' == user.toString()) {
 				didTimeout = true
+				echo $didTimeout
 			} else {
 				echo "Aborted by: [${user}]"
 			}
