@@ -42,7 +42,7 @@ pipeline {
 	stage ('condition check'){
 	steps{
 	script{
-	if (didTimeout) {
+	if (didTimeout == true) {
 		// do something on timeout
 		echo "Work flow stopped as no input was received within timeout"
 	} else if (userInput.size() > 0) {
