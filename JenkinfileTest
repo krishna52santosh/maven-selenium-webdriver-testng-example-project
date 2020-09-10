@@ -28,9 +28,10 @@ pipeline {
 					choice(name: 'ENVIRONMENT', choices: ['PROD','DR'].join('\n'), description: '')
 				])
 			}
-		} catch(err) {
+		} catch (err) {
 			def user = err.getCauses()[0].getUser()
-			echo $didTimeout
+			echo "user "$user
+			echo "timeout status "$didTimeout
 			if('SYSTEM' == user.toString()) {
 				didTimeout = true
 				echo $didTimeout
