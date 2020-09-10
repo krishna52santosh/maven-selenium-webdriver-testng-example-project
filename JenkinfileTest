@@ -5,8 +5,12 @@ pipeline {
 	//def buildInfo = Artifactory.newBuildInfo()
 	//env.JAVA_HOME="${tool 'JDK1.8.0_111'}"
 	//env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"	
-	def userInput = ""
-	def didTimeout = false
+	agent any
+	environment {
+	 userInput = ""
+	 didTimeout = false
+	}
+	
 	stages{
 	stage('Choose Environment(s) to Deploy') {
 	    
