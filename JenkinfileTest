@@ -65,7 +65,7 @@ pipeline {
 
 			stage ('Build Source Code') {
 				bat 'java -version'
-				bat 'clean compile -DskipTests=true -U'
+				bat 'mvn clean compile -DskipTests=true -U'
 			}
 
 			stage ("Disable Traffic at $userInput") {
