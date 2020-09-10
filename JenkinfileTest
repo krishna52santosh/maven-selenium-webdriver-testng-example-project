@@ -13,12 +13,12 @@ pipeline {
 	
 	stages{
 	stage('Choose Environment(s) to Deploy') {
-	   /* 
+	   script{
 		if ("$CR_NUMBER"?.trim() && "$CR_NUMBER".size() < 6) {
 			echo "Invalid change request number : $CR_NUMBER"
 			currentBuild.result = 'ABORTED'
 			error('Release Aborted.')
-		}*/
+		}
 		try {
 			timeout(time: 120, unit: 'SECONDS') {
 				userInput = input(id: 'chooseOptions',
@@ -35,6 +35,7 @@ pipeline {
 				echo "Aborted by: [${user}]"
 			}
 		}
+	}
 	}
 	
 	if (didTimeout) {
