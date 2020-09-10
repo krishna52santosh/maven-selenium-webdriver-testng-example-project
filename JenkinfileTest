@@ -39,7 +39,7 @@ pipeline {
 	}
 	}
 	}
-	
+	script{
 	if (didTimeout) {
 		// do something on timeout
 		echo "Work flow stopped as no input was received within timeout"
@@ -156,6 +156,6 @@ pipeline {
 		to: 'vshanmugavelu,smandadapu,ravindrard@virtusa.com,graja@virtusa.com,kgpraveen@virtusa.com,prathyushavp@virtusa.com,sarithad@virtusa.com,rmanoharan,shravankumar.b@sonata-software.com,gdinakar@virtusa.com,nareshbabuv@virtusa.com,ranjithgaddam@virtusa.com,sanghamittrap@virtusa.com,Shreyab@virtusa.com,rmoodapally,mohammedaahmed,rdevireddy,radhikan@virtusa.com,msambaraju,cc:AKapoor,cc:rwarrier,cc:sureshbabu'
 	
 	}*/	
-	
+}
 }
 }
