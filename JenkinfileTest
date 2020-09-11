@@ -94,14 +94,14 @@ pipeline {
 		
 			stage('Deploying into ${params.DEPLOY_TO}') {
 			steps{
-				echo "Start Deploying into Environment" ${params.DEPLOY_TO} 
+				echo "Start Deploying into Environment ${params.DEPLOY_TO}" 
 				//sh "/softwares/jenkins/scripts/aem-crx-deploy.sh $userInput ${env.WORKSPACE} ${CRX_PACKAGE_NAME} ${env.AEM_PROD_TOKENS}"
-				echo ${params.DEPLOY_TO} "deployment was successful."
+				echo "${params.DEPLOY_TO} deployment was successful."
 			}
 			}
 
 			stage ('Publish build Artifacts') {
-				//steps{
+				steps{
 			    //buildInfo.name = "Released-$CR_NUMBER"
 				//server.publishBuildInfo buildInfo
 				
@@ -118,9 +118,10 @@ pipeline {
 					'comment'            : "Production release change request no:${CR_NUMBER}",
 					'status'             : 'Released'
 				]
-				server.promote promotionConfig			
+				server.promote promotionConfig					
 				*/
-			//}
+				echo "test line in publish build artifacts"
+			}
 			}
 			
 				
