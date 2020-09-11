@@ -22,7 +22,7 @@ pipeline {
 	steps{
 	   script{
 		if (params.CR_NUMBER.size() < 6) {
-			echo "Invalid change request number : $CR_NUMBER"
+			echo "Invalid change request number : ${params.CR_NUMBER}"
 			currentBuild.result = 'ABORTED'
 			error('Release Aborted.')
 		}
@@ -50,12 +50,12 @@ pipeline {
 				}
 			}
 
-			stage ("Disable Traffic at params.CR_NUMBER") {
+			stage ("Disable Traffic at ${params.DEPLOY_TO}") {
 			steps{
 			script{
 				switch(params.DEPLOY_TO) {
 					  case "PROD":
-							echo "Executing at ${params.CR_NUMBER} ...."
+							echo "Executing at ${params.DEPLOY_TO} ...."
 							/*step([$class: "RundeckNotifier",
 								  includeRundeckLogs: true,
 								  jobId: "d13aaac3-3345-406f-bb65-082e681de5c2",
@@ -70,7 +70,7 @@ pipeline {
 								  tailLog: true]) */
 						break
 					  case "DR":
-							echo "Executing at params.CR_NUMBER ...."
+							echo "Executing at ${params.DEPLOY_TO} ...."
 							/*step([$class: "RundeckNotifier",
 								  includeRundeckLogs: true,
 								  jobId: "ead91293-b0a6-4861-be38-4ac0b1e14de5",
@@ -95,14 +95,14 @@ pipeline {
 			stage('Deploying into ${params.DEPLOY_TO}') {
 			steps{
 				echo "Start Deploying into Environment ${params.DEPLOY_TO}" 
-				//sh "/softwares/jenkins/scripts/aem-crx-deploy.sh $userInput ${env.WORKSPACE} ${CRX_PACKAGE_NAME} ${env.AEM_PROD_TOKENS}"
+				//sh "/softwares/jenkins/scripts/aem-crx-deploy.sh ${params.DEPLOY_TO} ${env.WORKSPACE} ${CRX_PACKAGE_NAME} ${env.AEM_PROD_TOKENS}"
 				echo "${params.DEPLOY_TO} deployment was successful."
 			}
 			}
 
 			stage ('Publish build Artifacts') {
 				steps{
-			    //buildInfo.name = "Released-$CR_NUMBER"
+			    //buildInfo.name = "Released-${params.CR_NUMBER}"
 				//server.publishBuildInfo buildInfo
 				
 				// Promote build
@@ -112,10 +112,10 @@ pipeline {
 					'buildName'          : buildInfo.name,
 					'buildNumber'        : buildInfo.number,
 					'targetRepo'         : 'libs-release-local',
-					'CRNumber'           : ${CR_NUMBER}
+					'CRNumber'           : "${params.CR_NUMBER}"
 				 
 					// Optional parameters
-					'comment'            : "Production release change request no:${CR_NUMBER}",
+					'comment'            : "Production release change request no:${params.CR_NUMBER}",
 					'status'             : 'Released'
 				]
 				server.promote promotionConfig					
