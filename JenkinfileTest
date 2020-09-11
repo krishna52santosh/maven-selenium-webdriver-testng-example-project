@@ -52,7 +52,8 @@ pipeline {
 
 			stage ("Disable Traffic at params.CR_NUMBER") {
 			steps{
-				switch("params.CR_NUMBER") {
+			script{
+				switch(params.CR_NUMBER) {
 					  case "PROD":
 							echo "Executing at params.CR_NUMBER ...."
 							/*step([$class: "RundeckNotifier",
@@ -88,13 +89,14 @@ pipeline {
 						break
 				}
 		      }
+			  }
 			 }					
 		
-			stage("Deploying into params.CR_NUMBER") {
+			stage("Deploying into" params.DEPLOY_TO) {
 			steps{
-				echo "Start Deploying into params.CR_NUMBER Environment"
+				echo "Start Deploying into Environment" params.DEPLOY_TO 
 				//sh "/softwares/jenkins/scripts/aem-crx-deploy.sh $userInput ${env.WORKSPACE} ${CRX_PACKAGE_NAME} ${env.AEM_PROD_TOKENS}"
-				echo "params.CR_NUMBER deployment was successful."
+				echo "params.DEPLOY_TO deployment was successful."
 			}
 			}
 
