@@ -4,7 +4,7 @@ pipeline {
 	agent any
 	
 	 parameters {
-        string(name: "CR_NUMBER", description: 'The CR Number' trim: true)
+        string(name: "CR_NUMBER", description: 'The CR Number')
         choice(name: "DEPLOY_TO", choices: ["PROD", "DR"])
     }
 	environment {
