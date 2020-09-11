@@ -4,7 +4,7 @@ pipeline {
 	agent any
 	
 	 parameters {
-        string(name: "CR_NUMBER", description: 'The CR Number')
+        string(name: "CR_NUMBER", description: 'The CR Number' trim: true)
         choice(name: "DEPLOY_TO", choices: ["PROD", "DR"])
     }
 	environment {
@@ -44,8 +44,10 @@ pipeline {
 			}*/
 
 			stage ('Build Source Code') {
+				steps{
 				bat 'java -version'
 				bat 'mvn clean compile -DskipTests=true -U'
+				}
 			}
 
 			stage ("Disable Traffic at params.CR_NUMBER") {
