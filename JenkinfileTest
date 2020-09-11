@@ -53,9 +53,9 @@ pipeline {
 			stage ("Disable Traffic at params.CR_NUMBER") {
 			steps{
 			script{
-				switch(params.CR_NUMBER) {
+				switch(params.DEPLOY_TO) {
 					  case "PROD":
-							echo "Executing at params.CR_NUMBER ...."
+							echo "Executing at ${params.CR_NUMBER} ...."
 							/*step([$class: "RundeckNotifier",
 								  includeRundeckLogs: true,
 								  jobId: "d13aaac3-3345-406f-bb65-082e681de5c2",
