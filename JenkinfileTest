@@ -51,7 +51,7 @@ pipeline {
 				}
 			}
 
-			stage ('Disable Traffic at params.DEPLOY_TO') {
+			stage ('Disable Traffic at $params.DEPLOY_TO') {
 			steps{
 			script{
 				switch(params.DEPLOY_TO) {
