@@ -92,7 +92,7 @@ pipeline {
 			  }
 			 }					
 		
-			stage("Deploying into" params.DEPLOY_TO) {
+			stage('Deploying into $params.DEPLOY_TO') {
 			steps{
 				echo "Start Deploying into Environment" params.DEPLOY_TO 
 				//sh "/softwares/jenkins/scripts/aem-crx-deploy.sh $userInput ${env.WORKSPACE} ${CRX_PACKAGE_NAME} ${env.AEM_PROD_TOKENS}"
