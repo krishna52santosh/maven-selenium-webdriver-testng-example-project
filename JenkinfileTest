@@ -4,7 +4,7 @@ pipeline {
 	agent any
 	
 	 parameters {
-        string(name: "CR_NUMBER", description: 'The CR Number')
+        string(name: "CR_NUMBER", description: 'The CR Number' trim: true)
         choice(name: "DEPLOY_TO", choices: ["PROD", "DR"])
     }
 	environment {
@@ -51,6 +51,7 @@ pipeline {
 			}
 
 			stage ("Disable Traffic at params.CR_NUMBER") {
+			steps{
 				switch("params.CR_NUMBER") {
 					  case "PROD":
 							echo "Executing at params.CR_NUMBER ...."
@@ -86,15 +87,19 @@ pipeline {
 						echo "Invalid environment ERROR..."
 						break
 				}
+		      }
 			 }					
 		
 			stage("Deploying into params.CR_NUMBER") {
+			steps{
 				echo "Start Deploying into params.CR_NUMBER Environment"
 				//sh "/softwares/jenkins/scripts/aem-crx-deploy.sh $userInput ${env.WORKSPACE} ${CRX_PACKAGE_NAME} ${env.AEM_PROD_TOKENS}"
 				echo "params.CR_NUMBER deployment was successful."
 			}
+			}
 
 			stage ('Publish build Artifacts') {
+				steps{
 			    //buildInfo.name = "Released-$CR_NUMBER"
 				//server.publishBuildInfo buildInfo
 				
@@ -113,6 +118,7 @@ pipeline {
 				]
 				server.promote promotionConfig			
 				*/
+			}
 			}
 			
 				
