@@ -1,60 +1,37 @@
 #!/usr/bin/env groovy
 pipeline {
+		
+	agent any
+	
+	 parameters {
+        string(name: "CR_NUMBER", description: 'The CR Number' trim: true)
+        choice(name: "DEPLOY_TO", choices: ["PROD", "DR"])
+    }
+	environment {
 	//def server = Artifactory.server('eCom-Artifactory')
 	//def rtMaven = Artifactory.newMavenBuild()
 	//def buildInfo = Artifactory.newBuildInfo()
 	//env.JAVA_HOME="${tool 'JDK1.8.0_111'}"
-	//env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"	
-	agent any
-	environment {
+	//env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
 	 userInput = ""
 	 didTimeout = false
 	}
 	
 	stages{
-	stage('Choose Environment(s) to Deploy') {
+	stage('Check CRNumber') {
 	steps{
 	   script{
-		/*if ("$CR_NUMBER"?.trim() && "$CR_NUMBER".size() < 6) {
+		if (params.CR_NUMBER.size() < 6) {
 			echo "Invalid change request number : $CR_NUMBER"
 			currentBuild.result = 'ABORTED'
 			error('Release Aborted.')
-		}*/
-		try {
-			timeout(time: 120, unit: 'SECONDS') {
-				userInput = input(id: 'chooseOptions',
-				message: 'Select environment(s) to deploy',
-				parameters: [
-					choice(name: 'ENVIRONMENT', choices: ['PROD','DR'].join('\n'), description: '')
-				])
-			}
-		} catch (err) {
-			def user = err.getCauses()[0].getUser()
-			echo "user "$user
-			echo "timeout status "$didTimeout
-			if('SYSTEM' == user.toString()) {
-				didTimeout = true
-				echo $didTimeout
-			} else {
-				echo "Aborted by: [${user}]"
-			}
 		}
+		
 	}
 	}
 	}
-	stage ('condition check'){
-	steps{
-	script{
-	if (didTimeout == true) {
-		// do something on timeout
-		echo "Work flow stopped as no input was received within timeout"
-	} else if (userInput.size() > 0) {
-		echo "Selected Environment is: $userInput"
-		try {
-			stage ('Checkout') {
-				checkout scm
-				checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GithubLogin', url: 'https://github.com/krishna52santosh/maven-selenium-webdriver-testng-example-project.git']]])
-			}
+
+		
 
 			/*stage ('Configure Build Environment') {
 				rtMaven.tool = 'apache-maven-3.3.9' // Tool name from Jenkins configuration
@@ -71,10 +48,10 @@ pipeline {
 				bat 'mvn clean compile -DskipTests=true -U'
 			}
 
-			stage ("Disable Traffic at $userInput") {
-				switch("$userInput") {
+			stage ("Disable Traffic at params.CR_NUMBER") {
+				switch("params.CR_NUMBER") {
 					  case "PROD":
-							echo "Executing at $userInput ...."
+							echo "Executing at params.CR_NUMBER ...."
 							/*step([$class: "RundeckNotifier",
 								  includeRundeckLogs: true,
 								  jobId: "d13aaac3-3345-406f-bb65-082e681de5c2",
@@ -89,7 +66,7 @@ pipeline {
 								  tailLog: true]) */
 						break
 					  case "DR":
-							echo "Executing at $userInput ...."
+							echo "Executing at params.CR_NUMBER ...."
 							/*step([$class: "RundeckNotifier",
 								  includeRundeckLogs: true,
 								  jobId: "ead91293-b0a6-4861-be38-4ac0b1e14de5",
@@ -109,10 +86,10 @@ pipeline {
 				}
 			 }					
 		
-			stage("Deploying into $userInput") {
-				echo "Start Deploying into $userInput Environment"
+			stage("Deploying into params.CR_NUMBER") {
+				echo "Start Deploying into params.CR_NUMBER Environment"
 				//sh "/softwares/jenkins/scripts/aem-crx-deploy.sh $userInput ${env.WORKSPACE} ${CRX_PACKAGE_NAME} ${env.AEM_PROD_TOKENS}"
-				echo "$userInput deployment was successful."
+				echo "params.CR_NUMBER deployment was successful."
 			}
 
 			stage ('Publish build Artifacts') {
@@ -136,16 +113,8 @@ pipeline {
 				*/
 			}
 			
-		} catch(err) {
-			def cause = err.getCauses()[0]
-			currentBuild.result = 'FAILURE'
-			echo "Build Failed due to $cause"
-		}		
-	}  else {
-		// do something else
-		echo "No environment selected, deployment was not successful."
-		currentBuild.result = 'FAILURE'
-	}
+				
+	 
 
 
 /*
@@ -161,8 +130,8 @@ pipeline {
 		to: 'vshanmugavelu,smandadapu,ravindrard@virtusa.com,graja@virtusa.com,kgpraveen@virtusa.com,prathyushavp@virtusa.com,sarithad@virtusa.com,rmanoharan,shravankumar.b@sonata-software.com,gdinakar@virtusa.com,nareshbabuv@virtusa.com,ranjithgaddam@virtusa.com,sanghamittrap@virtusa.com,Shreyab@virtusa.com,rmoodapally,mohammedaahmed,rdevireddy,radhikan@virtusa.com,msambaraju,cc:AKapoor,cc:rwarrier,cc:sureshbabu'
 	
 	}*/	
-}
-}
-}
+
+
+
 }
 }
