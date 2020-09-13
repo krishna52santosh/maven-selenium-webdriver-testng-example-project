@@ -9,7 +9,7 @@ pipeline {
 	//def userInput = ""
 	//def didTimeout = false
 	stages {
-			stage("Clear WebServer Cache at ${ENVIRONMENT}") {
+			stage ("Clear WebServer Cache at ${ENVIRONMENT}") {
 			steps{
 			script{
 				switch(ENVIRONMENT) {
@@ -54,7 +54,7 @@ pipeline {
 			 }
 			 }
 			 }
-			stage("Warm-up WebServer Cache at ${ENVIRONMENT}") {
+			stage ("Warm-up WebServer Cache at ${ENVIRONMENT}") {
 			steps{
 			script{
 				switch(ENVIRONMENT) {
@@ -100,7 +100,7 @@ pipeline {
 			}
 			}
 			
-			stage("Enable Traffic at ${ENVIRONMENT}") {
+			stage ("Enable Traffic at ${ENVIRONMENT}") {
 			steps{
 			script{
 				switch(ENVIRONMENT) {
