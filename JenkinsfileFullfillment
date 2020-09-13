@@ -11,7 +11,7 @@ pipeline {
 	stages {
 			stage ('Clear WebServer Cache at ${params.ENVIRONMENT}') {
 			steps{
-			script{
+			
 				switch(ENVIRONMENT) {
 					  case "PROD":
 							echo "Executing at ${params.ENVIRONMENT} ...."
@@ -27,6 +27,7 @@ pipeline {
 								  shouldWaitForRundeckJob: true,
 								  tags: "",
 								  tailLog: true])*/
+							step(
 						break
 					  case "DR":
 							echo "Executing at ${params.ENVIRONMENT} ...."
@@ -53,7 +54,7 @@ pipeline {
 				}
 			 }
 			 }
-			 }
+			 
 			stage ('Warm-up WebServer Cache at ${params.ENVIRONMENT}') {
 			steps{
 			script{
