@@ -9,12 +9,12 @@ pipeline {
 	//def userInput = ""
 	//def didTimeout = false
 	stages {
-			stage ('Clear WebServer Cache at ${ENVIRONMENT}') {
+			stage ('Clear WebServer Cache at ${params.ENVIRONMENT}') {
 			steps{
 			script{
 				switch(ENVIRONMENT) {
 					  case "PROD":
-							echo "Executing at ${ENVIRONMENT} ...."
+							echo "Executing at ${params.ENVIRONMENT} ...."
 							/*step([$class: "RundeckNotifier",
 								  includeRundeckLogs: true,
 								  jobId: "5958d0e8-f1d0-4956-b48f-bfd3ec6fc597",
@@ -29,7 +29,7 @@ pipeline {
 								  tailLog: true])*/
 						break
 					  case "DR":
-							echo "Executing at ${ENVIRONMENT} ...."
+							echo "Executing at ${params.ENVIRONMENT} ...."
 							/*step([$class: "RundeckNotifier",
 								  includeRundeckLogs: true,
 								  jobId: "5b13eac3-d2d1-43b3-97f7-060c7c2edb66",
@@ -44,7 +44,7 @@ pipeline {
 								  tailLog: true])*/
 						break
 					  case "TEST":
-							echo "Executing at ${ENVIRONMENT} ...."
+							echo "Executing at ${params.ENVIRONMENT} ...."
 						break						
 					  default:
 						echo "Invalid environment ERROR..."
@@ -54,12 +54,12 @@ pipeline {
 			 }
 			 }
 			 }
-			stage ('Warm-up WebServer Cache at ${ENVIRONMENT}') {
+			stage ('Warm-up WebServer Cache at ${params.ENVIRONMENT}') {
 			steps{
 			script{
 				switch(ENVIRONMENT) {
 					  case "PROD":
-							echo "Executing at ${ENVIRONMENT} ...."
+							echo "Executing at ${params.ENVIRONMENT} ...."
 							/*step([$class: "RundeckNotifier",
 								  includeRundeckLogs: true,
 								  jobId: "be6aeda7-b696-4022-85f6-89da75c74f60",
@@ -74,7 +74,7 @@ pipeline {
 								  tailLog: true])*/
 						break
 					  case "DR":
-							echo "Executing at ${ENVIRONMENT} ...."
+							echo "Executing at ${params.ENVIRONMENT} ...."
 							/*step([$class: "RundeckNotifier",
 								  includeRundeckLogs: true,
 								  jobId: "d599ba71-30a5-416a-a962-164c6740a7f9",
@@ -89,7 +89,7 @@ pipeline {
 								  tailLog: true])*/
 						break
 					  case "TEST":
-							echo "Executing at ${ENVIRONMENT} ...."
+							echo "Executing at ${params.ENVIRONMENT} ...."
 						break						
 					  default:
 						echo "Invalid environment ERROR..."
@@ -100,12 +100,12 @@ pipeline {
 			}
 			}
 			
-			stage ('Enable Traffic at ${ENVIRONMENT}') {
+			stage ('Enable Traffic at ${params.ENVIRONMENT}') {
 			steps{
 			script{
 				switch(ENVIRONMENT) {
 					  case "PROD":
-							echo "Executing at ${ENVIRONMENT} ...."
+							echo "Executing at ${params.ENVIRONMENT} ...."
 							/*step([$class: "RundeckNotifier",
 								  includeRundeckLogs: true,
 								  jobId: "d13aaac3-3345-406f-bb65-082e681de5c2",
@@ -120,7 +120,7 @@ pipeline {
 								  tailLog: true])*/
 						break
 					  case "DR":
-							echo "Executing at ${ENVIRONMENT} ...."
+							echo "Executing at ${params.ENVIRONMENT} ...."
 							/*step([$class: "RundeckNotifier",
 								  includeRundeckLogs: true,
 								  jobId: "ead91293-b0a6-4861-be38-4ac0b1e14de5",
@@ -135,7 +135,7 @@ pipeline {
 								  tailLog: true])*/
 						break
 					  case "TEST":
-							echo "Executing at ${ENVIRONMENT} ...."
+							echo "Executing at ${params.ENVIRONMENT} ...."
 							currentBuild.result = 'FAILURE'
 						break						
 					  default:
