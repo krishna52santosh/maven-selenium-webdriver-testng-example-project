@@ -1,0 +1,165 @@
+#!/usr/bin/env groovy
+pipeline {
+
+	agent any
+	
+	 parameters {
+        choice(name: "ENVIRONMENT", choices: ["PROD", "DR"])
+    }
+	//def userInput = ""
+	//def didTimeout = false
+	stages {
+			stage("Clear WebServer Cache at ${ENVIRONMENT}") {
+			steps{
+			script{
+				switch(ENVIRONMENT) {
+					  case "PROD":
+							echo "Executing at ${ENVIRONMENT} ...."
+							/*step([$class: "RundeckNotifier",
+								  includeRundeckLogs: true,
+								  jobId: "5958d0e8-f1d0-4956-b48f-bfd3ec6fc597",
+								  nodeFilters: "",
+								  options: """
+									   Cache=Delete Cache
+									""",
+								  rundeckInstance: "PROD-RUNDECK",
+								  shouldFailTheBuild: true,
+								  shouldWaitForRundeckJob: true,
+								  tags: "",
+								  tailLog: true])*/
+						break
+					  case "DR":
+							echo "Executing at ${ENVIRONMENT} ...."
+							/*step([$class: "RundeckNotifier",
+								  includeRundeckLogs: true,
+								  jobId: "5b13eac3-d2d1-43b3-97f7-060c7c2edb66",
+								  nodeFilters: "",
+								  options: """
+									   Cache=Delete Cache
+									""",
+								  rundeckInstance: "DR-RUNDECK",
+								  shouldFailTheBuild: true,
+								  shouldWaitForRundeckJob: true,
+								  tags: "",
+								  tailLog: true])*/
+						break
+					  case "TEST":
+							echo "Executing at ${ENVIRONMENT} ...."
+						break						
+					  default:
+						echo "Invalid environment ERROR..."
+						currentBuild.result = 'FAILURE'
+						break
+				}
+			 }
+			 }
+			 }
+			stage("Warm-up WebServer Cache at ${ENVIRONMENT}") {
+			steps{
+			script{
+				switch(ENVIRONMENT) {
+					  case "PROD":
+							echo "Executing at ${ENVIRONMENT} ...."
+							/*step([$class: "RundeckNotifier",
+								  includeRundeckLogs: true,
+								  jobId: "be6aeda7-b696-4022-85f6-89da75c74f60",
+								  nodeFilters: "",
+								  options: """
+									   Cache=Warm-up Cache
+									""",
+								  rundeckInstance: "PROD-RUNDECK",
+								  shouldFailTheBuild: true,
+								  shouldWaitForRundeckJob: true,
+								  tags: "",
+								  tailLog: true])*/
+						break
+					  case "DR":
+							echo "Executing at ${ENVIRONMENT} ...."
+							/*step([$class: "RundeckNotifier",
+								  includeRundeckLogs: true,
+								  jobId: "d599ba71-30a5-416a-a962-164c6740a7f9",
+								  nodeFilters: "",
+								  options: """
+									   Cache=Warm-up Cache
+									""",
+								  rundeckInstance: "DR-RUNDECK",
+								  shouldFailTheBuild: true,
+								  shouldWaitForRundeckJob: true,
+								  tags: "",
+								  tailLog: true])*/
+						break
+					  case "TEST":
+							echo "Executing at ${ENVIRONMENT} ...."
+						break						
+					  default:
+						echo "Invalid environment ERROR..."
+						currentBuild.result = 'FAILURE'
+						break
+				}					
+			}
+			}
+			}
+			
+			stage("Enable Traffic at ${ENVIRONMENT}") {
+			steps{
+			script{
+				switch(ENVIRONMENT) {
+					  case "PROD":
+							echo "Executing at ${ENVIRONMENT} ...."
+							/*step([$class: "RundeckNotifier",
+								  includeRundeckLogs: true,
+								  jobId: "d13aaac3-3345-406f-bb65-082e681de5c2",
+								  nodeFilters: "",
+								  options: """
+									   operations=enableTraffic.sh
+									""",
+								  rundeckInstance: "PROD-RUNDECK",
+								  shouldFailTheBuild: true,
+								  shouldWaitForRundeckJob: true,
+								  tags: "",
+								  tailLog: true])*/
+						break
+					  case "DR":
+							echo "Executing at ${ENVIRONMENT} ...."
+							/*step([$class: "RundeckNotifier",
+								  includeRundeckLogs: true,
+								  jobId: "ead91293-b0a6-4861-be38-4ac0b1e14de5",
+								  nodeFilters: "",
+								  options: """
+									   operations=enableTraffic.sh
+									""",
+								  rundeckInstance: "DR-RUNDECK",
+								  shouldFailTheBuild: true,
+								  shouldWaitForRundeckJob: true,
+								  tags: "",
+								  tailLog: true])*/
+						break
+					  case "TEST":
+							echo "Executing at ${ENVIRONMENT} ...."
+							currentBuild.result = 'FAILURE'
+						break						
+					  default:
+						echo "Invalid environment ERROR..."
+						currentBuild.result = 'FAILURE'
+						break
+				}							
+			}
+			}
+			}
+		
+	
+
+	/*stage('Send email') {
+		emailext attachLog: false,
+		body: '${SCRIPT, template="groovy-html.template"}',
+		compressLog: true, mimeType: 'text/html',
+		recipientProviders: [culprits(), brokenBuildSuspects()],
+		replyTo: '$DEFAULT_REPLYTO',
+		subject: '$DEFAULT_SUBJECT',
+		to:'sureshbabu'
+		to: 'vshanmugavelu,smandadapu,ravindrard@virtusa.com,graja@virtusa.com,kgpraveen@virtusa.com,prathyushavp@virtusa.com,sarithad@virtusa.com,rmanoharan,shravankumar.b@sonata-software.com,gdinakar@virtusa.com,nareshbabuv@virtusa.com,ranjithgaddam@virtusa.com,sanghamittrap@virtusa.com,Shreyab@virtusa.com,rmoodapally,mohammedaahmed,rdevireddy,radhikan@virtusa.com,msambaraju,cc:AKapoor,cc:rwarrier,cc:sureshbabu'
+
+	}*/	
+}
+
+}
