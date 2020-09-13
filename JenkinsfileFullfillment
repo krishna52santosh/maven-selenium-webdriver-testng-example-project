@@ -27,7 +27,7 @@ pipeline {
 								  shouldWaitForRundeckJob: true,
 								  tags: "",
 								  tailLog: true])*/
-							step(
+							
 						break
 					  case "DR":
 							echo "Executing at ${params.ENVIRONMENT} ...."
