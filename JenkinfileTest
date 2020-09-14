@@ -1,4 +1,40 @@
 #!/usr/bin/env groovy
+
+// Define variables
+List Environment_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
+List DR_cluster_list = ["\"Select:selected\"","\"dc1\"","\"dc2\"","\"dc3\""]
+List PROD_cluster_list = ["\"Select:selected\"","\"pc1\"","\"pc2\"","\"pc3\""]
+List default_item = ["\"Not Applicable\""]
+String Environment = buildScript(Environment_list)
+String ProdClusterList = buildScript(PROD_cluster_list)
+String DRClusterList = buildScript(DR_cluster_list)
+String items = populateItems(default_item,PROD_cluster_list,DR_cluster_list)
+// Methods to build groovy scripts to populate data
+String buildScript(List values){
+  return "return $values"
+}
+String populateItems(List default_item, List ProdClusterList, List DRClusterList){
+return """if(Environment.equals('ProdClusterList')){
+     return $ProdClusterList
+     }
+     else if(Environment.equals('DRClusterList')){
+     return $DRClusterList
+     }else{
+     return $default_item
+     }
+     """
+}
+// Properties step to set the Active choice parameters via 
+// Declarative Scripting
+properties([
+    parameters([
+        [$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false,
+        script:  Environment]]],
+[$class: 'CascadeChoiceParameter', choiceType: 'PT_SINGLE_SELECT', name: 'Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]]
+    ])
+])
+
+
 pipeline {
 		
 	agent any
