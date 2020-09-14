@@ -92,6 +92,7 @@ pipeline {
 				switch(params.Environment) {
 					  case "PROD":
 							echo "Executing at ${params.Environment} ...."
+							echo "Executing at ${params.Cluster} cluster ...."
 							/*step([$class: "RundeckNotifier",
 								  includeRundeckLogs: true,
 								  jobId: "d13aaac3-3345-406f-bb65-082e681de5c2",
@@ -107,6 +108,7 @@ pipeline {
 						break
 					  case "DR":
 							echo "Executing at ${params.Environment} ...."
+							echo "Executing at ${params.Cluster} cluster ...."
 							/*step([$class: "RundeckNotifier",
 								  includeRundeckLogs: true,
 								  jobId: "ead91293-b0a6-4861-be38-4ac0b1e14de5",
@@ -133,6 +135,7 @@ pipeline {
 				echo "Start Deploying into Environment ${params.Environment}" 
 				//sh "/softwares/jenkins/scripts/aem-crx-deploy.sh ${params.Environment} ${env.WORKSPACE} ${CRX_PACKAGE_NAME} ${env.AEM_PROD_TOKENS}"
 				echo "${params.Environment} deployment was successful."
+				echo "${params.Cluster} cluster deployment was successfull ...."
 			}
 			}
 
