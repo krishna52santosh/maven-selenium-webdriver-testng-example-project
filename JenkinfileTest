@@ -1,24 +1,23 @@
 #!/usr/bin/env groovy
-
 // Define variables
-List Environment_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
-List DR_cluster_list = ["\"Select:selected\"","\"dc1\"","\"dc2\"","\"dc3\""]
-List PROD_cluster_list = ["\"Select:selected\"","\"pc1\"","\"pc2\"","\"pc3\""]
+List category_list = ["\"Select:selected\"","\"Vegetables\"","\"Fruits\""]
+List fruits_list = ["\"Select:selected\"","\"apple\"","\"banana\"","\"mango\""]
+List vegetables_list = ["\"Select:selected\"","\"potato\"","\"tomato\"","\"broccoli\""]
 List default_item = ["\"Not Applicable\""]
-String Environment = buildScript(Environment_list)
-String ProdClusterList = buildScript(PROD_cluster_list)
-String DRClusterList = buildScript(DR_cluster_list)
-String items = populateItems(default_item,PROD_cluster_list,DR_cluster_list)
+String categories = buildScript(category_list)
+String vegetables = buildScript(vegetables_list)
+String fruits = buildScript(fruits_list)
+String items = populateItems(default_item,vegetables_list,fruits_list)
 // Methods to build groovy scripts to populate data
 String buildScript(List values){
   return "return $values"
 }
-String populateItems(List default_item, List ProdClusterList, List DRClusterList){
-return """if(Environment.equals('ProdClusterList')){
-     return $ProdClusterList
+String populateItems(List default_item, List vegetablesList, List fruitsList){
+return """if(Categories.equals('Vegetables')){
+     return $vegetablesList
      }
-     else if(Environment.equals('DRClusterList')){
-     return $DRClusterList
+     else if(Categories.equals('Fruits')){
+     return $fruitsList
      }else{
      return $default_item
      }
@@ -28,12 +27,11 @@ return """if(Environment.equals('ProdClusterList')){
 // Declarative Scripting
 properties([
     parameters([
-        [$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false,
-        script:  Environment]]],
-[$class: 'CascadeChoiceParameter', choiceType: 'PT_SINGLE_SELECT', name: 'Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]]
+        [$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Categories', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false,
+        script:  categories]]],
+[$class: 'CascadeChoiceParameter', choiceType: 'PT_SINGLE_SELECT',name: 'Items', referencedParameters: 'Categories', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]]
     ])
 ])
-
 
 pipeline {
 		
