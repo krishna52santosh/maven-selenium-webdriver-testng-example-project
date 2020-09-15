@@ -136,6 +136,7 @@ pipeline {
 				
 				switch(params.Action) {
 					  case "Release":
+							echo "Releasing changes into ${params.Environment}"
 							if (params.Environment == "PROD"){
 							echo "Start Deploying into Environment ${params.Environment}" 
 							echo "${params.Cluster} cluster deployment was successfull ...."
@@ -148,6 +149,7 @@ pipeline {
 							
 						break
 					  case "RollBack":
+							echo "Rolling back changes from ${params.Environment} "
 							if (params.Environment == "PROD"){
 							echo "Start Deploying into Environment ${params.Environment}" 
 							echo "${params.Cluster} cluster deployment was successfull ...."
