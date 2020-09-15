@@ -86,7 +86,7 @@ pipeline {
 				}
 			}
 
-			stage ('Disable Traffic at $params.Environment') {
+			stage ('Disable Traffic on Environment') {
 			steps{
 			script{
 				switch(params.Environment) {
@@ -130,12 +130,45 @@ pipeline {
 			  }
 			 }					
 		
-			stage('Deploying into ${params.Environment}') {
+			stage('Deploying into Environment') {
 			steps{
-				echo "Start Deploying into Environment ${params.Environment}" 
+				script{
+				
+				switch(params.Action) {
+					  case "Release":
+							if (params.Environment == PROD){
+							echo "Start Deploying into Environment ${params.Environment}" 
+							echo "${params.Cluster} cluster deployment was successfull ...."
+							}
+							else if (params.Environment == DR){
+							echo "Start Deploying into Environment ${params.Environment}" 
+							echo "${params.Cluster} cluster deployment was successfull ...."
+							}
+							else echo "Wrong Environment"
+							
+						break
+					  case "RollBack":
+							if (params.Environment == PROD){
+							echo "Start Deploying into Environment ${params.Environment}" 
+							echo "${params.Cluster} cluster deployment was successfull ...."
+							}
+							else if (params.Environment == DR){
+							echo "Start Deploying into Environment ${params.Environment}" 
+							echo "${params.Cluster} cluster deployment was successfull ...."
+							}
+							else echo "Wrong Environment"
+						
+						break
+					  default:
+						echo "Invalid environment ERROR..."
+						break
+				}
+				
+				//echo "Start Deploying into Environment ${params.Environment}" 
 				//sh "/softwares/jenkins/scripts/aem-crx-deploy.sh ${params.Environment} ${env.WORKSPACE} ${CRX_PACKAGE_NAME} ${env.AEM_PROD_TOKENS}"
-				echo "${params.Environment} deployment was successful."
-				echo "${params.Cluster} cluster deployment was successfull ...."
+				//echo "${params.Environment} deployment was successful."
+				//echo "${params.Cluster} cluster deployment was successfull ...."
+			}
 			}
 			}
 
