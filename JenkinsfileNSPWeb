@@ -136,11 +136,11 @@ pipeline {
 				
 				switch(params.Action) {
 					  case "Release":
-							if (params.Environment == PROD){
+							if (params.Environment == "PROD"){
 							echo "Start Deploying into Environment ${params.Environment}" 
 							echo "${params.Cluster} cluster deployment was successfull ...."
 							}
-							else if (params.Environment == DR){
+							else if (params.Environment == "DR"){
 							echo "Start Deploying into Environment ${params.Environment}" 
 							echo "${params.Cluster} cluster deployment was successfull ...."
 							}
@@ -148,11 +148,11 @@ pipeline {
 							
 						break
 					  case "RollBack":
-							if (params.Environment == PROD){
+							if (params.Environment == "PROD"){
 							echo "Start Deploying into Environment ${params.Environment}" 
 							echo "${params.Cluster} cluster deployment was successfull ...."
 							}
-							else if (params.Environment == DR){
+							else if (params.Environment == "DR"){
 							echo "Start Deploying into Environment ${params.Environment}" 
 							echo "${params.Cluster} cluster deployment was successfull ...."
 							}
