@@ -14,17 +14,17 @@ String buildScript(List values){
   return "return $values"
 }
 String populateItems(List default_item, List ProdClusterList, List DRClusterList){
-		return """if(Environment.equals('PROD')){
-			          return $ProdClusterList
-		}
-		else if(Environment.equals('DR')){
-			return $DRClusterList
-		}
-		else{
-		 return $default_item
-		 }
-		 """
+return """if(Environment.equals('PROD')){
+    return $ProdClusterList
 	}
+	else if(Environment.equals('DR')){
+	return $DRClusterList
+	}
+	else{
+	return $default_item
+	}
+	"""
+}
 	// Properties step to set the Active choice parameters via 
 	// Declarative Scripting
 	properties([
