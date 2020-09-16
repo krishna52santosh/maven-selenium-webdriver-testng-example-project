@@ -104,7 +104,7 @@
 								for (int i = 0; i < params.Cluster.size(); ++i) {
 									echo "Testing the ${params.Cluster[i]} cluster"
 								}
-								}
+								
 								/*step([$class: "RundeckNotifier",
 									  includeRundeckLogs: true,
 									  jobId: "d13aaac3-3345-406f-bb65-082e681de5c2",
