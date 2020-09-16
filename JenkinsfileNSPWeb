@@ -15,7 +15,7 @@ String buildScript(List values){
 }
 String populateItems(List default_item, List ProdClusterList, List DRClusterList){
 		return """if(Environment.equals('PROD')){
-			return $ProdClusterList
+			          return $ProdClusterList
 		}
 		else if(Environment.equals('DR')){
 			return $DRClusterList
