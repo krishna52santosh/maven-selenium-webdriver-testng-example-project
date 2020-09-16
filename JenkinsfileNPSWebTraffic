@@ -200,7 +200,7 @@ pipeline {
 									echo "Testing the ${clusters[i]} cluster"
 								}
 								
-								// /*step([$class: "RundeckNotifier",
+								 /*step([$class: "RundeckNotifier",
 									  includeRundeckLogs: true,
 									  jobId: "d13aaac3-3345-406f-bb65-082e681de5c2",
 									  nodeFilters: "",
@@ -211,8 +211,8 @@ pipeline {
 									  shouldFailTheBuild: true,
 									  shouldWaitForRundeckJob: true,
 									  tags: "",
-								//	  tailLog: true]) */
-						    break
+									  tailLog: true]) */
+						  /*  break
 						  case "DR":
 								echo "Executing at ${params.Environment} ...."
 								echo "Executing at ${params.Cluster} cluster ...."
@@ -234,7 +234,7 @@ pipeline {
 									  shouldWaitForRundeckJob: true,
 									  tags: "",
 								//	  tailLog: true]) */
-							break
+						/*	break
 						  default:
 							echo "Invalid environment ERROR..."
 						    break
