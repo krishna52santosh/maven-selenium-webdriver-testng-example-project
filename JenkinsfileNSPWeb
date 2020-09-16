@@ -93,7 +93,7 @@ pipeline {
 					  case "PROD":
 							echo "Executing at ${params.Environment} ...."
 							echo "Executing at ${params.Cluster} cluster ...."
-								for(item in ${params.Cluster}){
+								for(item in params.Cluster){
 									println item
 								}
 							/*step([$class: "RundeckNotifier",
@@ -112,7 +112,7 @@ pipeline {
 					  case "DR":
 							echo "Executing at ${params.Environment} ...."
 							echo "Executing at ${params.Cluster} cluster ...."
-								for(item in ${params.Cluster}){
+								for(item in params.Cluster){
 									println item
 								}
 							/*step([$class: "RundeckNotifier",
