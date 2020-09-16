@@ -1,4 +1,4 @@
-	#!/usr/bin/env groovy
+#!/usr/bin/env groovy
 
 	// Define variables
 	List Environment_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
