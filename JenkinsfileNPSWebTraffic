@@ -150,7 +150,7 @@ pipeline {
 										  shouldWaitForRundeckJob: true,
 										  tags: "",
 										  tailLog: true]) */
-								break
+							  break
 							  case "DR":
 									echo "Executing at ${params.Environment} ...."
 									echo "Executing at ${params.Cluster} cluster ...."
@@ -172,10 +172,10 @@ pipeline {
 										  shouldWaitForRundeckJob: true,
 										  tags: "",
 										  tailLog: true]) */
-								break
+						      break
 							  default:
 								echo "Invalid environment ERROR..."
-								break
+							  break
 						}
 					  break
 					  default: 
@@ -185,7 +185,7 @@ pipeline {
 				  }
 				 }		
 
-		stage ('Disable Traffic on Environment/Cluster') {
+		/*stage ('Disable Traffic on Environment/Cluster') {
 				steps{
 				script{
 					switch(params.Environment) {
@@ -241,7 +241,7 @@ pipeline {
 					}
 				  }
 				  }
-				 }
+				 }*/
 			
 
 /*
