@@ -72,7 +72,7 @@ pipeline {
 		stage ('Traffic Action on Environment/Cluster') {
 				steps{
 				script{
-					switch{params.TrafficAction}{
+					switch(params.TrafficAction) {
 					  case "Enable":
 						switch(params.Environment) {
 							  case "PROD":
