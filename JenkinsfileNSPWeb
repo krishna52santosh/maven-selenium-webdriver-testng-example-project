@@ -94,15 +94,11 @@
 								echo "Executing at ${params.Environment} ...."
 								echo "Executing at ${params.Cluster} cluster ...."
 								//String cname= echo 
-								//String[] str = params.Cluster.split(',')
+								String[] str = params.Cluster.split(',')
 								
-									//for( String clusters : str ){
-										//echo "for loop for PROD"
-										//echo "for loop for $clusters"
-										//println(clusters)
-								//	}
-								for (int i = 0; i < params.Cluster.size(); ++i) {
-									echo "Testing the ${params.Cluster[i]} cluster"
+								
+								for (int i = 0; i < str.size(); ++i) {
+									echo "Testing the ${str[i]} cluster"
 								}
 								
 								/*step([$class: "RundeckNotifier",
