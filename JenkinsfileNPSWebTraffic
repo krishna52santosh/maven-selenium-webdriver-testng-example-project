@@ -83,7 +83,7 @@ pipeline {
 									
 									
 									for (int i = 0; i < clusters.size(); ++i) {
-										echo "Testing the ${clusters[i]} cluster"
+										echo "Enabling the ${clusters[i]} cluster"
 									}
 									
 									/*step([$class: "RundeckNotifier",
@@ -106,7 +106,7 @@ pipeline {
 									
 									
 									for (int i = 0; i < clusters.size(); ++i) {
-										echo "Testing the ${clusters[i]} cluster"
+										echo "Enabling the ${clusters[i]} cluster"
 									}
 									/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
@@ -136,7 +136,7 @@ pipeline {
 									
 									echo "disableTraffic"
 									for (int i = 0; i < clusters.size(); ++i) {
-										echo "Testing the ${clusters[i]} cluster"
+										echo "Disabling the ${clusters[i]} cluster"
 									}
 									
 									/*step([$class: "RundeckNotifier",
@@ -159,7 +159,7 @@ pipeline {
 									
 									
 									for (int i = 0; i < clusters.size(); ++i) {
-										echo "Testing the ${clusters[i]} cluster"
+										echo "Disabling the ${clusters[i]} cluster"
 									}
 									/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
