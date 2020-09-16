@@ -93,13 +93,18 @@
 						  case "PROD":
 								echo "Executing at ${params.Environment} ...."
 								echo "Executing at ${params.Cluster} cluster ...."
-								String[] str = params.Cluster.split(',')
+								//String cname= echo 
+								//String[] str = params.Cluster.split(',')
 								
-									for( String clusters : str ){
+									//for( String clusters : str ){
 										//echo "for loop for PROD"
-										echo "for loop for $clusters"
-										println(clusters)
-									}
+										//echo "for loop for $clusters"
+										//println(clusters)
+								//	}
+								for (int i = 0; i < params.Cluster.size(); ++i) {
+									echo "Testing the ${params.Cluster[i]} cluster"
+								}
+								}
 								/*step([$class: "RundeckNotifier",
 									  includeRundeckLogs: true,
 									  jobId: "d13aaac3-3345-406f-bb65-082e681de5c2",
