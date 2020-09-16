@@ -1,25 +1,26 @@
 #!/usr/bin/env groovy
 
 	// Define variables
-	List Environment_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
-	List DR_cluster_list = ["\"Select:selected\"","\"dc1\"","\"dc2\"","\"dc3\""]
-	List PROD_cluster_list = ["\"Select:selected\"","\"pc1\"","\"pc2\"","\"pc3\"","\"pc4\""]
-	List default_item = ["\"Not Applicable\""]
-	String Environment = buildScript(Environment_list)
-	String ProdClusterList = buildScript(PROD_cluster_list)
-	String DRClusterList = buildScript(DR_cluster_list)
-	String items = populateItems(default_item,PROD_cluster_list,DR_cluster_list)
-	// Methods to build groovy scripts to populate data
-	String buildScript(List values){
-	  return "return $values"
-	}
-	String populateItems(List default_item, List ProdClusterList, List DRClusterList){
-	return """if(Environment.equals('PROD')){
-		 return $ProdClusterList
-		 }
-		 else if(Environment.equals('DR')){
-		 return $DRClusterList
-		 }else{
+List Environment_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
+List DR_cluster_list = ["\"dc1\"","\"dc2\"","\"dc3\""]
+List PROD_cluster_list = ["\"pc1\"","\"pc2\"","\"pc3\"","\"pc4\""]
+List default_item = ["\"Not Applicable\""]
+String Environment = buildScript(Environment_list)
+String ProdClusterList = buildScript(PROD_cluster_list)
+String DRClusterList = buildScript(DR_cluster_list)
+String items = populateItems(default_item,PROD_cluster_list,DR_cluster_list)
+// Methods to build groovy scripts to populate data
+String buildScript(List values){
+  return "return $values"
+}
+String populateItems(List default_item, List ProdClusterList, List DRClusterList){
+		return """if(Environment.equals('PROD')){
+			return $ProdClusterList
+		}
+		else if(Environment.equals('DR')){
+			return $DRClusterList
+		}
+		else{
 		 return $default_item
 		 }
 		 """
@@ -30,11 +31,11 @@
 		parameters([
 			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false,
 			script:  Environment]]],
-	[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]]
+			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]]
 		])
 	])
 
-	pipeline {
+pipeline {
 			
 		agent any
 		
@@ -94,11 +95,11 @@
 								echo "Executing at ${params.Environment} ...."
 								echo "Executing at ${params.Cluster} cluster ...."
 								//String cname= echo 
-								String[] str = params.Cluster.split(',')
+								String[] clusters = params.Cluster.split(',')
 								
 								
-								for (int i = 0; i < str.size(); ++i) {
-									echo "Testing the ${str[i]} cluster"
+								for (int i = 0; i < clusters.size(); ++i) {
+									echo "Testing the ${clusters[i]} cluster"
 								}
 								
 								/*step([$class: "RundeckNotifier",
@@ -117,10 +118,12 @@
 						  case "DR":
 								echo "Executing at ${params.Environment} ...."
 								echo "Executing at ${params.Cluster} cluster ...."
-									for(item in params.Cluster){
-										echo "for loop for DR"
-										println item
-									}
+								String[] clusters = params.Cluster.split(',')
+								
+								
+								for (int i = 0; i < clusters.size(); ++i) {
+									echo "Testing the ${clusters[i]} cluster"
+								}
 								/*step([$class: "RundeckNotifier",
 									  includeRundeckLogs: true,
 									  jobId: "ead91293-b0a6-4861-be38-4ac0b1e14de5",
@@ -143,7 +146,7 @@
 				 }					
 			
 				stage('Deploying into Environment') {
-				steps{
+				 steps{
 					script{
 					
 					switch(params.Action) {
