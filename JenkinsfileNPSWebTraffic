@@ -125,7 +125,7 @@ pipeline {
 								echo "Invalid environment ERROR..."
 								break
 						}
-					  case "Disable"
+					  case "Disable":
 							switch(params.Environment) {
 							  case "PROD":
 									echo "Executing at ${params.Environment} ...."
