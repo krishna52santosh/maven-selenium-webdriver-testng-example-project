@@ -93,7 +93,7 @@
 						  case "PROD":
 								echo "Executing at ${params.Environment} ...."
 								echo "Executing at ${params.Cluster} cluster ...."
-								String[] str = ${params.Cluster}.split(',')
+								String[] str = params.Cluster.split(',')
 								
 									for( String clusters : str ){
 										//echo "for loop for PROD"
