@@ -186,64 +186,6 @@ pipeline {
 				  }
 				 }		
 
-		/*stage ('Disable Traffic on Environment/Cluster') {
-				steps{
-				script{
-					switch(params.Environment) {
-						  case "PROD":
-								echo "Executing at ${params.Environment} ...."
-								echo "Executing at ${params.Cluster} cluster ...."
-								//String cname= echo 
-								String[] clusters = params.Cluster.split(',')
-								
-								
-								for (int i = 0; i < clusters.size(); ++i) {
-									echo "Testing the ${clusters[i]} cluster"
-								}
-								
-								// /*step([$class: "RundeckNotifier",
-									  includeRundeckLogs: true,
-									  jobId: "d13aaac3-3345-406f-bb65-082e681de5c2",
-									  nodeFilters: "",
-									  options: """
-										   operations=disableTraffic.sh
-										""",
-									  rundeckInstance: "PROD-RUNDECK",
-									  shouldFailTheBuild: true,
-									  shouldWaitForRundeckJob: true,
-									  tags: "",
-								//	  tailLog: true]) */
-						 /*   break
-						  case "DR":
-								echo "Executing at ${params.Environment} ...."
-								echo "Executing at ${params.Cluster} cluster ...."
-								String[] clusters = params.Cluster.split(',')
-								
-								
-								for (int i = 0; i < clusters.size(); ++i) {
-									echo "Testing the ${clusters[i]} cluster"
-								}
-								// /*step([$class: "RundeckNotifier",
-									  includeRundeckLogs: true,
-									  jobId: "ead91293-b0a6-4861-be38-4ac0b1e14de5",
-									  nodeFilters: "",
-									  options: """
-										   operations=disableTraffic.sh
-										""",
-									  rundeckInstance: "DR-RUNDECK",
-									  shouldFailTheBuild: true,
-									  shouldWaitForRundeckJob: true,
-									  tags: "",
-								//	  tailLog: true]) */
-						/*	break
-						  default:
-							echo "Invalid environment ERROR..."
-						    break
-					}
-				  }
-				  }
-				 }*/
-			
 
 /*
 		stage('Send email') {
