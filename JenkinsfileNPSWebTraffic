@@ -212,7 +212,7 @@ pipeline {
 									  shouldWaitForRundeckJob: true,
 									  tags: "",
 								//	  tailLog: true]) */
-						  break
+						    break
 						  case "DR":
 								echo "Executing at ${params.Environment} ...."
 								echo "Executing at ${params.Cluster} cluster ...."
@@ -237,7 +237,7 @@ pipeline {
 							break
 						  default:
 							echo "Invalid environment ERROR..."
-							break
+						    break
 					}
 				  }
 				  }
