@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-	// Define variables
+// Define variables
 List Environment_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
 List DR_cluster_list = ["\"dc1\"","\"dc2\"","\"dc3\""]
 List PROD_cluster_list = ["\"pc1\"","\"pc2\"","\"pc3\"","\"pc4\""]
@@ -15,14 +15,14 @@ String buildScript(List values){
 }
 String populateItems(List default_item, List ProdClusterList, List DRClusterList){
 return """if(Environment.equals('PROD')){
-     return $ProdClusterList
-	}
-	else if(Environment.equals('DR')){
-	return $DRClusterList
-	}
-	else{
-	return $default_item
-	}
+		return $ProdClusterList
+		}
+		else if(Environment.equals('DR')){
+		return $DRClusterList
+		}
+		else{
+		return $default_item
+		}
 	"""
 }
 	// Properties step to set the Active choice parameters via 
@@ -42,6 +42,7 @@ pipeline {
 		 parameters {
 			string(name: "CR_NUMBER", description: 'The CR Number')
 			choice(name: "Action", choices: ["Release", "RollBack"])
+			choice(name: "Action", choices: ["WithWebserverContent", "WithOutWebserverContent"])
 		}
 		environment {
 		//def server = Artifactory.server('eCom-Artifactory')
@@ -100,20 +101,22 @@ pipeline {
 								
 								for (int i = 0; i < clusters.size(); ++i) {
 									echo "Testing the ${clusters[i]} cluster"
-								}
-								
-								/*step([$class: "RundeckNotifier",
+									/*step([$class: "RundeckNotifier",
 									  includeRundeckLogs: true,
 									  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
 									  nodeFilters: "",
 									  options: """
 										   operations=disableTraffic.sh
+										    cluster: ${clusters[i]} 
 										""",
 									  rundeckInstance: "PROD-RUNDECK",
 									  shouldFailTheBuild: true,
 									  shouldWaitForRundeckJob: true,
 									  tags: "",
 									  tailLog: true]) */
+								}
+								
+								
 							break
 						  case "DR":
 								echo "Executing at ${params.Environment} ...."
@@ -123,19 +126,21 @@ pipeline {
 								
 								for (int i = 0; i < clusters.size(); ++i) {
 									echo "Testing the ${clusters[i]} cluster"
-								}
-								/*step([$class: "RundeckNotifier",
+									/*step([$class: "RundeckNotifier",
 									  includeRundeckLogs: true,
 									  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
 									  nodeFilters: "",
 									  options: """
 										   operations=disableTraffic.sh
+										    cluster: ${clusters[i]} 
 										""",
 									  rundeckInstance: "DR-RUNDECK",
 									  shouldFailTheBuild: true,
 									  shouldWaitForRundeckJob: true,
 									  tags: "",
 									  tailLog: true]) */
+								}
+								
 							break
 						  default:
 							echo "Invalid environment ERROR..."
@@ -154,10 +159,34 @@ pipeline {
 								echo "Releasing changes into ${params.Environment}"
 								if (params.Environment == "PROD"){
 								echo "Start Deploying into Environment ${params.Environment}" 
+									/*step([$class: "RundeckNotifier",
+									  includeRundeckLogs: true,
+									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+									  nodeFilters: "",
+									  options: """
+										    cluster: ${clusters[i]} 
+										""",
+									  rundeckInstance: "PROD-RUNDECK",
+									  shouldFailTheBuild: true,
+									  shouldWaitForRundeckJob: true,
+									  tags: "",
+									  tailLog: true]) */
 								echo "${params.Cluster} cluster deployment was successfull ...."
 								}
 								else if (params.Environment == "DR"){
 								echo "Start Deploying into Environment ${params.Environment}" 
+									/*step([$class: "RundeckNotifier",
+									  includeRundeckLogs: true,
+									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+									  nodeFilters: "",
+									  options: """
+										   cluster: ${clusters[i]} 
+										""",
+									  rundeckInstance: "DR-RUNDECK",
+									  shouldFailTheBuild: true,
+									  shouldWaitForRundeckJob: true,
+									  tags: "",
+									  tailLog: true]) */
 								echo "${params.Cluster} cluster deployment was successfull ...."
 								}
 								else echo "Wrong Environment"
@@ -167,10 +196,34 @@ pipeline {
 								echo "Rolling back changes from ${params.Environment} "
 								if (params.Environment == "PROD"){
 								echo "Start Deploying into Environment ${params.Environment}" 
+									/*step([$class: "RundeckNotifier",
+									  includeRundeckLogs: true,
+									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+									  nodeFilters: "",
+									  options: """
+										    cluster: ${clusters[i]} 
+										""",
+									  rundeckInstance: "PROD-RUNDECK",
+									  shouldFailTheBuild: true,
+									  shouldWaitForRundeckJob: true,
+									  tags: "",
+									  tailLog: true]) */
 								echo "${params.Cluster} cluster deployment was successfull ...."
 								}
 								else if (params.Environment == "DR"){
 								echo "Start Deploying into Environment ${params.Environment}" 
+									/*step([$class: "RundeckNotifier",
+									  includeRundeckLogs: true,
+									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+									  nodeFilters: "",
+									  options: """
+										   cluster: ${clusters[i]} 
+										""",
+									  rundeckInstance: "DR-RUNDECK",
+									  shouldFailTheBuild: true,
+									  shouldWaitForRundeckJob: true,
+									  tags: "",
+									  tailLog: true]) */
 								echo "${params.Cluster} cluster deployment was successfull ...."
 								}
 								else echo "Wrong Environment"
