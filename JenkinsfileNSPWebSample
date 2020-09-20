@@ -32,11 +32,11 @@ return """if(Environment.equals('PROD')){
 List NetworkCluster_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
 List NW_DR_cluster_list = ["\"ndc1\"","\"ndc2\"","\"ndc3\""]
 List NW_PROD_cluster_list = ["\"webcl1\""]
-List default_item = ["\"Not Applicable\""]
+List nwdefault_item = ["\"Not Applicable\""]
 String NWEnvironment = buildScript(NetworkCluster_list)
 String NWProdClusterList = buildScript(NW_PROD_cluster_list)
 String NWDRClusterList = buildScript(NW_DR_cluster_list)
-String items = populateItems(default_item,NW_PROD_cluster_list,NW_DR_cluster_list)
+String nwitems = populateItems(nwdefault_item,NW_PROD_cluster_list,NW_DR_cluster_list)
 // Methods to build groovy scripts to populate data
 String buildScript(List values){
   return "return $values"
