@@ -88,10 +88,10 @@ pipeline {
 									
 									/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
-										  jobId: "d13aaac3-3345-406f-bb65-082e681de5c2",
+										  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
 										  nodeFilters: "",
 										  options: """
-											   operations=disableTraffic.sh
+											   operations=enableTraffic.sh
 											""",
 										  rundeckInstance: "PROD-RUNDECK",
 										  shouldFailTheBuild: true,
@@ -110,10 +110,10 @@ pipeline {
 									}
 									/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
-										  jobId: "ead91293-b0a6-4861-be38-4ac0b1e14de5",
+										  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
 										  nodeFilters: "",
 										  options: """
-											   operations=disableTraffic.sh
+											   operations=enableTraffic.sh
 											""",
 										  rundeckInstance: "DR-RUNDECK",
 										  shouldFailTheBuild: true,
@@ -141,7 +141,7 @@ pipeline {
 									
 									/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
-										  jobId: "d13aaac3-3345-406f-bb65-082e681de5c2",
+										  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
 										  nodeFilters: "",
 										  options: """
 											   operations=disableTraffic.sh
@@ -163,7 +163,7 @@ pipeline {
 									}
 									/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
-										  jobId: "ead91293-b0a6-4861-be38-4ac0b1e14de5",
+										  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
 										  nodeFilters: "",
 										  options: """
 											   operations=disableTraffic.sh
