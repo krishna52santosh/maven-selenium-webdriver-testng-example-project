@@ -33,7 +33,7 @@ List NetworkCluster_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
 List NW_DR_cluster_list = ["\"ndc1\"","\"ndc2\"","\"ndc3\""]
 List NW_PROD_cluster_list = ["\"webcl1\""]
 List nwdefault_item = ["\"Not Applicable\""]
-String NWEnvironment = buildScript(NetworkCluster_list)
+String NetWorkClusterEnvironment = buildScript(NetworkCluster_list)
 String NWProdClusterList = buildScript(NW_PROD_cluster_list)
 String NWDRClusterList = buildScript(NW_DR_cluster_list)
 String nwitems = populateItems(nwdefault_item,NW_PROD_cluster_list,NW_DR_cluster_list)
@@ -42,10 +42,10 @@ String nwbuildScript(List nwvalues){
   return "return $nwvalues"
 }
 String nwpopulateItems(List nwdefault_item, List NWProdClusterList, List NWDRClusterList){
-return """if(NWEnvironment.equals('PROD')){
-		         return $NWProdClusterList
+return """if(NetWorkClusterEnvironment.equals('PROD')){
+		    return $NWProdClusterList
 		}
-		else if(NWEnvironment.equals('DR')){
+		else if(NetWorkClusterEnvironment.equals('DR')){
 		return $NWDRClusterList
 		}
 		else{
