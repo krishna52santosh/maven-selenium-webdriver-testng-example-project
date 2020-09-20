@@ -25,6 +25,34 @@ return """if(Environment.equals('PROD')){
 		}
 	"""
 }
+
+
+
+// network clusters selection
+List NetworkCluster_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
+List NW_DR_cluster_list = ["\"ndc1\"","\"ndc2\"","\"ndc3\""]
+List NW_PROD_cluster_list = ["\"webcl1\""]
+List default_item = ["\"Not Applicable\""]
+String NWEnvironment = buildScript(NetworkCluster_list)
+String NWProdClusterList = buildScript(NW_PROD_cluster_list)
+String NWDRClusterList = buildScript(NW_DR_cluster_list)
+String items = populateItems(default_item,NW_PROD_cluster_list,NW_DR_cluster_list)
+// Methods to build groovy scripts to populate data
+String buildScript(List values){
+  return "return $values"
+}
+String populateItems(List default_item, List NWProdClusterList, List NWDRClusterList){
+return """if(NWEnvironment.equals('PROD')){
+		         return $NWProdClusterList
+		}
+		else if(NWEnvironment.equals('DR')){
+		return $NWDRClusterList
+		}
+		else{
+		return $default_item
+		}
+	"""
+}
 	// Properties step to set the Active choice parameters via 
 	// Declarative Scripting
 	properties([
@@ -32,6 +60,10 @@ return """if(Environment.equals('PROD')){
 			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false,
 			script:  Environment]]],
 			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]]
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'NetWorkClusterEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false,
+			script:  NWEnvironment]]],
+			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'NetworkCluster', referencedParameters: 'NWEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]]
+		
 		])
 	])
 
@@ -43,16 +75,9 @@ pipeline {
 			string(name: "CR_NUMBER", description: 'The CR Number')
 			choice(name: "Action", choices: ["Release", "RollBack"])
 			choice(name: "ContentAction", choices: ["WithWebserverContent", "WithOutWebserverContent"])
+			choice(name: "TrafficCluster", choices: ["webcl1"])
 		}
-		environment {
-		//def server = Artifactory.server('eCom-Artifactory')
-		//def rtMaven = Artifactory.newMavenBuild()
-		//def buildInfo = Artifactory.newBuildInfo()
-		//env.JAVA_HOME="${tool 'JDK1.8.0_111'}"
-		//env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
-		 userInput = ""
-		 didTimeout = false
-		}
+
 		
 		stages{
 		stage('Check CRNumber') {
