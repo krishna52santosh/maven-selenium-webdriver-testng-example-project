@@ -57,11 +57,10 @@ return """if(NWEnvironment.equals('PROD')){
 	// Declarative Scripting
 	properties([
 		parameters([
-			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false,
-			script:  Environment]]],
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Environment]]],
 			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]]
 			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'NetWorkClusterEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  NWEnvironment]]],
-			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'NetworkCluster', referencedParameters: 'NWEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]]
+			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'NetworkCluster', referencedParameters: 'NetWorkClusterEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: nwitems]]]
 		
 		])
 	])
