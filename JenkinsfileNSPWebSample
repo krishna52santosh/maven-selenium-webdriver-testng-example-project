@@ -3,7 +3,7 @@
 // Define variables
 List Environment_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
 List DR_cluster_list = ["\"dc1\"","\"dc2\"","\"dc3\""]
-List PROD_cluster_list = ["\"pc1\"","\"pc2\"","\"pc3\"","\"pc4\""]
+List PROD_cluster_list = ["\"clstr-1\""]
 List default_item = ["\"Not Applicable\""]
 String Environment = buildScript(Environment_list)
 String ProdClusterList = buildScript(PROD_cluster_list)
@@ -15,7 +15,7 @@ String buildScript(List values){
 }
 String populateItems(List default_item, List ProdClusterList, List DRClusterList){
 return """if(Environment.equals('PROD')){
-		return $ProdClusterList
+		         return $ProdClusterList
 		}
 		else if(Environment.equals('DR')){
 		return $DRClusterList
