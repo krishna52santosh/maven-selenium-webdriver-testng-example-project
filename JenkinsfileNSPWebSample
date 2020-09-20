@@ -325,7 +325,7 @@ pipeline {
 					
 					
 				    }
-					else echo "Selected ${params.ContentAction)"
+					else echo "Selected ${params.ContentAction}"
 				   }
 				  }
 				 }
