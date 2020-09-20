@@ -69,26 +69,8 @@ pipeline {
 		}
 		}
 
-			
 
-				/*stage ('Configure Build Environment') {
-					rtMaven.tool = 'apache-maven-3.3.9' // Tool name from Jenkins configuration
-					rtMaven.deployer releaseRepo: 'ecom-release-local', snapshotRepo: 'ecom-snapshot-local', server: server
-					rtMaven.resolver releaseRepo: 'ecom-vrepo',snapshotRepo: 'ecom-vrepo', server: server
-					
-					buildInfo.env.capture = true
-					buildInfo.env.filter.addInclude("*")
-					buildInfo.env.filter.addExclude("DONT_COLLECT*")					
-				}*/
-
-				stage ('Build Source Code') {
-					steps{
-					bat 'java -version'
-					//bat 'mvn clean compile -DskipTests=true -U'
-					}
-				}
-
-				stage ('Disable Traffic on Environment') {
+		stage ('Disable Traffic on Environment') {
 				steps{
 				script{
 					switch(params.Environment) {
@@ -97,8 +79,6 @@ pipeline {
 								echo "Executing at ${params.Cluster} cluster ...."
 								//String cname= echo 
 								String[] clusters = params.Cluster.split(',')
-								
-								
 								for (int i = 0; i < clusters.size(); ++i) {
 									echo "Testing the ${clusters[i]} cluster"
 									/*step([$class: "RundeckNotifier",
@@ -158,36 +138,44 @@ pipeline {
 						  case "Release":
 								echo "Releasing changes into ${params.Environment}"
 								if (params.Environment == "PROD"){
-								echo "Start Deploying WAR into Environment ${params.Environment}" 
-									/*step([$class: "RundeckNotifier",
-									  includeRundeckLogs: true,
-									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
-									  nodeFilters: "",
-									  options: """
-										    cluster: ${clusters[i]} 
-										""",
-									  rundeckInstance: "PROD-RUNDECK",
-									  shouldFailTheBuild: true,
-									  shouldWaitForRundeckJob: true,
-									  tags: "",
-									  tailLog: true]) */
-								echo "${params.Cluster} cluster deployment was successfull ...."
+									echo "Start Deploying WAR into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+										  nodeFilters: "",
+										  options: """
+												cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "PROD-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									
+										echo "${params.Cluster} cluster deployment was successfull ...."
+									}
 								}
 								else if (params.Environment == "DR"){
-								echo "Start Deploying WAR into Environment ${params.Environment}" 
-									/*step([$class: "RundeckNotifier",
-									  includeRundeckLogs: true,
-									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
-									  nodeFilters: "",
-									  options: """
-										   cluster: ${clusters[i]} 
-										""",
-									  rundeckInstance: "DR-RUNDECK",
-									  shouldFailTheBuild: true,
-									  shouldWaitForRundeckJob: true,
-									  tags: "",
-									  tailLog: true]) */
-								echo "${params.Cluster} cluster deployment was successfull ...."
+									echo "Start Deploying WAR into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+										  nodeFilters: "",
+										  options: """
+											   cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "DR-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									
+										echo "${params.Cluster} cluster deployment was successfull ...."
+									}
 								}
 								else echo "Wrong Environment"
 								
@@ -195,36 +183,44 @@ pipeline {
 						  case "RollBack":
 								echo "Rolling back changes from ${params.Environment} "
 								if (params.Environment == "PROD"){
-								echo "Start Deploying WAR into Environment ${params.Environment}" 
-									/*step([$class: "RundeckNotifier",
-									  includeRundeckLogs: true,
-									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
-									  nodeFilters: "",
-									  options: """
-										    cluster: ${clusters[i]} 
-										""",
-									  rundeckInstance: "PROD-RUNDECK",
-									  shouldFailTheBuild: true,
-									  shouldWaitForRundeckJob: true,
-									  tags: "",
-									  tailLog: true]) */
-								echo "${params.Cluster} cluster deployment was successfull ...."
+									echo "Start Deploying WAR into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+										  nodeFilters: "",
+										  options: """
+												cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "PROD-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									
+									echo "${params.Cluster} cluster deployment was successfull ...."
+									}
 								}
 								else if (params.Environment == "DR"){
-								echo "Start Deploying WAR into Environment ${params.Environment}" 
-									/*step([$class: "RundeckNotifier",
-									  includeRundeckLogs: true,
-									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
-									  nodeFilters: "",
-									  options: """
-										   cluster: ${clusters[i]} 
-										""",
-									  rundeckInstance: "DR-RUNDECK",
-									  shouldFailTheBuild: true,
-									  shouldWaitForRundeckJob: true,
-									  tags: "",
-									  tailLog: true]) */
-								echo "${params.Cluster} cluster deployment was successfull ...."
+									
+									echo "Start Deploying WAR into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+										  nodeFilters: "",
+										  options: """
+											   cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "DR-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									 echo "${params.Cluster} cluster deployment was successfull ...."
+									}
 								}
 								else echo "Wrong Environment"
 							
@@ -247,36 +243,42 @@ pipeline {
 						  case "Release":
 								echo "Releasing changes into ${params.Environment}"
 								if (params.Environment == "PROD"){
-								echo "Start Deploying content into Environment ${params.Environment}" 
-									/*step([$class: "RundeckNotifier",
-									  includeRundeckLogs: true,
-									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
-									  nodeFilters: "",
-									  options: """
-										    cluster: ${clusters[i]} 
-										""",
-									  rundeckInstance: "PROD-RUNDECK",
-									  shouldFailTheBuild: true,
-									  shouldWaitForRundeckJob: true,
-									  tags: "",
-									  tailLog: true]) */
-								echo "${params.Cluster} cluster deployment was successfull ...."
+									echo "Start Deploying content into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+										  nodeFilters: "",
+										  options: """
+												cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "PROD-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									 echo "${params.Cluster} cluster deployment was successfull ...."
+									}
 								}
 								else if (params.Environment == "DR"){
-								echo "Start Deploying content into Environment ${params.Environment}" 
-									/*step([$class: "RundeckNotifier",
-									  includeRundeckLogs: true,
-									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
-									  nodeFilters: "",
-									  options: """
-										   cluster: ${clusters[i]} 
-										""",
-									  rundeckInstance: "DR-RUNDECK",
-									  shouldFailTheBuild: true,
-									  shouldWaitForRundeckJob: true,
-									  tags: "",
-									  tailLog: true]) */
-								echo "${params.Cluster} cluster deployment was successfull ...."
+									echo "Start Deploying content into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+										  nodeFilters: "",
+										  options: """
+											   cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "DR-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+										echo "${params.Cluster} cluster deployment was successfull ...."
+									}
 								}
 								else echo "Wrong Environment"
 								
@@ -284,36 +286,42 @@ pipeline {
 						  case "RollBack":
 								echo "Rolling back changes from ${params.Environment} "
 								if (params.Environment == "PROD"){
-								echo "Start Deploying content into Environment ${params.Environment}" 
-									/*step([$class: "RundeckNotifier",
-									  includeRundeckLogs: true,
-									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
-									  nodeFilters: "",
-									  options: """
-										    cluster: ${clusters[i]} 
-										""",
-									  rundeckInstance: "PROD-RUNDECK",
-									  shouldFailTheBuild: true,
-									  shouldWaitForRundeckJob: true,
-									  tags: "",
-									  tailLog: true]) */
-								echo "${params.Cluster} cluster deployment was successfull ...."
+									echo "Start Deploying content into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+										  nodeFilters: "",
+										  options: """
+												cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "PROD-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									 echo "${params.Cluster} cluster deployment was successfull ...."
+									}
 								}
 								else if (params.Environment == "DR"){
-								echo "Start Deploying content into Environment ${params.Environment}" 
-									/*step([$class: "RundeckNotifier",
-									  includeRundeckLogs: true,
-									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
-									  nodeFilters: "",
-									  options: """
-										   cluster: ${clusters[i]} 
-										""",
-									  rundeckInstance: "DR-RUNDECK",
-									  shouldFailTheBuild: true,
-									  shouldWaitForRundeckJob: true,
-									  tags: "",
-									  tailLog: true]) */
-								echo "${params.Cluster} cluster deployment was successfull ...."
+									echo "Start Deploying content into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+										  nodeFilters: "",
+										  options: """
+											   cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "DR-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									 echo "${params.Cluster} cluster deployment was successfull ...."
+									}
 								}
 								else echo "Wrong Environment"
 							
@@ -331,34 +339,6 @@ pipeline {
 				 }
 				
 
-				stage ('Publish build Artifacts') {
-					steps{
-					//buildInfo.name = "Released-${params.CR_NUMBER}"
-					//server.publishBuildInfo buildInfo
-					
-					// Promote build
-					/*
-					def promotionConfig = [
-						// Mandatory parameters
-						'buildName'          : buildInfo.name,
-						'buildNumber'        : buildInfo.number,
-						'targetRepo'         : 'libs-release-local',
-						'CRNumber'           : "${params.CR_NUMBER}"
-					 
-						// Optional parameters
-						'comment'            : "Production release change request no:${params.CR_NUMBER}",
-						'status'             : 'Released'
-					]
-					server.promote promotionConfig				
-					*/
-					echo "test line in publish build artifacts"
-				}
-				}
-				
-					
-		 
-
-
 	/*
 		stage('Send email') {
 			emailext attachLog: false,
@@ -375,5 +355,5 @@ pipeline {
 
 
 
-	}
-	}
+ }
+}
