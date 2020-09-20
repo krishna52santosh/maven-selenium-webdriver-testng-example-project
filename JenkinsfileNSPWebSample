@@ -154,7 +154,7 @@ pipeline {
 										  tags: "",
 										  tailLog: true]) */
 									
-										echo "${params.Cluster} cluster deployment was successfull ...."
+										echo "${clusters[i]} cluster deployment was successfull ...."
 									}
 								}
 								else if (params.Environment == "DR"){
@@ -174,7 +174,7 @@ pipeline {
 										  tags: "",
 										  tailLog: true]) */
 									
-										echo "${params.Cluster} cluster deployment was successfull ...."
+										echo "${clusters[i]} cluster deployment was successfull ...."
 									}
 								}
 								else echo "Wrong Environment"
@@ -199,7 +199,7 @@ pipeline {
 										  tags: "",
 										  tailLog: true]) */
 									
-									echo "${params.Cluster} cluster deployment was successfull ...."
+									echo "${clusters[i]} cluster deployment was successfull ...."
 									}
 								}
 								else if (params.Environment == "DR"){
@@ -219,7 +219,7 @@ pipeline {
 										  shouldWaitForRundeckJob: true,
 										  tags: "",
 										  tailLog: true]) */
-									 echo "${params.Cluster} cluster deployment was successfull ...."
+									 echo "${clusters[i]} cluster deployment was successfull ...."
 									}
 								}
 								else echo "Wrong Environment"
@@ -258,7 +258,7 @@ pipeline {
 										  shouldWaitForRundeckJob: true,
 										  tags: "",
 										  tailLog: true]) */
-									 echo "${params.Cluster} cluster deployment was successfull ...."
+									 echo "${clusters[i]} cluster deployment was successfull ...."
 									}
 								}
 								else if (params.Environment == "DR"){
@@ -277,7 +277,7 @@ pipeline {
 										  shouldWaitForRundeckJob: true,
 										  tags: "",
 										  tailLog: true]) */
-										echo "${params.Cluster} cluster deployment was successfull ...."
+										echo "${clusters[i]} cluster deployment was successfull ...."
 									}
 								}
 								else echo "Wrong Environment"
@@ -301,7 +301,7 @@ pipeline {
 										  shouldWaitForRundeckJob: true,
 										  tags: "",
 										  tailLog: true]) */
-									 echo "${params.Cluster} cluster deployment was successfull ...."
+									 echo "${clusters[i]} cluster deployment was successfull ...."
 									}
 								}
 								else if (params.Environment == "DR"){
@@ -320,7 +320,7 @@ pipeline {
 										  shouldWaitForRundeckJob: true,
 										  tags: "",
 										  tailLog: true]) */
-									 echo "${params.Cluster} cluster deployment was successfull ...."
+									 echo "${clusters[i]} cluster deployment was successfull ...."
 									}
 								}
 								else echo "Wrong Environment"
