@@ -42,7 +42,7 @@ pipeline {
 		 parameters {
 			string(name: "CR_NUMBER", description: 'The CR Number')
 			choice(name: "Action", choices: ["Release", "RollBack"])
-			choice(name: "Action", choices: ["WithWebserverContent", "WithOutWebserverContent"])
+			choice(name: "ContentAction", choices: ["WithWebserverContent", "WithOutWebserverContent"])
 		}
 		environment {
 		//def server = Artifactory.server('eCom-Artifactory')
@@ -150,7 +150,7 @@ pipeline {
 				  }
 				 }					
 			
-				stage('Deploying into Environment') {
+				stage('Deploying WAR into Environment') {
 				 steps{
 					script{
 					
@@ -158,7 +158,7 @@ pipeline {
 						  case "Release":
 								echo "Releasing changes into ${params.Environment}"
 								if (params.Environment == "PROD"){
-								echo "Start Deploying into Environment ${params.Environment}" 
+								echo "Start Deploying WAR into Environment ${params.Environment}" 
 									/*step([$class: "RundeckNotifier",
 									  includeRundeckLogs: true,
 									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
@@ -174,7 +174,7 @@ pipeline {
 								echo "${params.Cluster} cluster deployment was successfull ...."
 								}
 								else if (params.Environment == "DR"){
-								echo "Start Deploying into Environment ${params.Environment}" 
+								echo "Start Deploying WAR into Environment ${params.Environment}" 
 									/*step([$class: "RundeckNotifier",
 									  includeRundeckLogs: true,
 									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
@@ -195,7 +195,7 @@ pipeline {
 						  case "RollBack":
 								echo "Rolling back changes from ${params.Environment} "
 								if (params.Environment == "PROD"){
-								echo "Start Deploying into Environment ${params.Environment}" 
+								echo "Start Deploying WAR into Environment ${params.Environment}" 
 									/*step([$class: "RundeckNotifier",
 									  includeRundeckLogs: true,
 									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
@@ -211,7 +211,7 @@ pipeline {
 								echo "${params.Cluster} cluster deployment was successfull ...."
 								}
 								else if (params.Environment == "DR"){
-								echo "Start Deploying into Environment ${params.Environment}" 
+								echo "Start Deploying WAR into Environment ${params.Environment}" 
 									/*step([$class: "RundeckNotifier",
 									  includeRundeckLogs: true,
 									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
@@ -234,13 +234,102 @@ pipeline {
 							break
 					}
 					
-					//echo "Start Deploying into Environment ${params.Environment}" 
-					//sh "/softwares/jenkins/scripts/aem-crx-deploy.sh ${params.Environment} ${env.WORKSPACE} ${CRX_PACKAGE_NAME} ${env.AEM_PROD_TOKENS}"
-					//echo "${params.Environment} deployment was successful."
-					//echo "${params.Cluster} cluster deployment was successfull ...."
+					
 				}
 				}
 				}
+				
+				stage('Deploying Content into Environment') {
+				 steps{
+					script{
+					 if(params.ContentAction == "WithWebserverContent"){
+					  switch(params.Action) {
+						  case "Release":
+								echo "Releasing changes into ${params.Environment}"
+								if (params.Environment == "PROD"){
+								echo "Start Deploying content into Environment ${params.Environment}" 
+									/*step([$class: "RundeckNotifier",
+									  includeRundeckLogs: true,
+									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+									  nodeFilters: "",
+									  options: """
+										    cluster: ${clusters[i]} 
+										""",
+									  rundeckInstance: "PROD-RUNDECK",
+									  shouldFailTheBuild: true,
+									  shouldWaitForRundeckJob: true,
+									  tags: "",
+									  tailLog: true]) */
+								echo "${params.Cluster} cluster deployment was successfull ...."
+								}
+								else if (params.Environment == "DR"){
+								echo "Start Deploying content into Environment ${params.Environment}" 
+									/*step([$class: "RundeckNotifier",
+									  includeRundeckLogs: true,
+									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+									  nodeFilters: "",
+									  options: """
+										   cluster: ${clusters[i]} 
+										""",
+									  rundeckInstance: "DR-RUNDECK",
+									  shouldFailTheBuild: true,
+									  shouldWaitForRundeckJob: true,
+									  tags: "",
+									  tailLog: true]) */
+								echo "${params.Cluster} cluster deployment was successfull ...."
+								}
+								else echo "Wrong Environment"
+								
+							break
+						  case "RollBack":
+								echo "Rolling back changes from ${params.Environment} "
+								if (params.Environment == "PROD"){
+								echo "Start Deploying content into Environment ${params.Environment}" 
+									/*step([$class: "RundeckNotifier",
+									  includeRundeckLogs: true,
+									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+									  nodeFilters: "",
+									  options: """
+										    cluster: ${clusters[i]} 
+										""",
+									  rundeckInstance: "PROD-RUNDECK",
+									  shouldFailTheBuild: true,
+									  shouldWaitForRundeckJob: true,
+									  tags: "",
+									  tailLog: true]) */
+								echo "${params.Cluster} cluster deployment was successfull ...."
+								}
+								else if (params.Environment == "DR"){
+								echo "Start Deploying content into Environment ${params.Environment}" 
+									/*step([$class: "RundeckNotifier",
+									  includeRundeckLogs: true,
+									  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+									  nodeFilters: "",
+									  options: """
+										   cluster: ${clusters[i]} 
+										""",
+									  rundeckInstance: "DR-RUNDECK",
+									  shouldFailTheBuild: true,
+									  shouldWaitForRundeckJob: true,
+									  tags: "",
+									  tailLog: true]) */
+								echo "${params.Cluster} cluster deployment was successfull ...."
+								}
+								else echo "Wrong Environment"
+							
+							break
+						  default:
+							echo "Invalid environment ERROR..."
+							break
+					 }
+					
+					
+				    }
+					else echo "Selected ${params.ContentAction)"
+				   }
+				  }
+				 }
+				
 
 				stage ('Publish build Artifacts') {
 					steps{
@@ -260,7 +349,7 @@ pipeline {
 						'comment'            : "Production release change request no:${params.CR_NUMBER}",
 						'status'             : 'Released'
 					]
-					server.promote promotionConfig					
+					server.promote promotionConfig				
 					*/
 					echo "test line in publish build artifacts"
 				}
