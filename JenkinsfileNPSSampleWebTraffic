@@ -84,13 +84,13 @@ pipeline {
 									
 									for (int i = 0; i < clusters.size(); ++i) {
 										echo "Enabling the ${clusters[i]} cluster"
-                    /*step([$class: "RundeckNotifier",
+                    								/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
 										  nodeFilters: "",
 										  options: """
 											   operations=enableTraffic.sh
-                         cluster: ${clusters[i]} 
+                         								   cluster: ${clusters[i]} 
 											""",
 										  rundeckInstance: "PROD-RUNDECK",
 										  shouldFailTheBuild: true,
@@ -109,13 +109,13 @@ pipeline {
 									
 									for (int i = 0; i < clusters.size(); ++i) {
 										echo "Enabling the ${clusters[i]} cluster"
-                    /*step([$class: "RundeckNotifier",
+                  								  /*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
 										  nodeFilters: "",
 										  options: """
 											   operations=enableTraffic.sh
-                         cluster: ${clusters[i]} 
+                        									 cluster: ${clusters[i]} 
 											""",
 										  rundeckInstance: "DR-RUNDECK",
 										  shouldFailTheBuild: true,
@@ -141,13 +141,13 @@ pipeline {
 									echo "disableTraffic"
 									for (int i = 0; i < clusters.size(); ++i) {
 										echo "Disabling the ${clusters[i]} cluster"
-                    /*step([$class: "RundeckNotifier",
+                    								  /*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
 										  nodeFilters: "",
 										  options: """
 											   operations=disableTraffic.sh
-                         cluster: ${clusters[i]}
+                         									cluster: ${clusters[i]}
 											""",
 										  rundeckInstance: "PROD-RUNDECK",
 										  shouldFailTheBuild: true,
@@ -166,13 +166,13 @@ pipeline {
 									
 									for (int i = 0; i < clusters.size(); ++i) {
 										echo "Disabling the ${clusters[i]} cluster"
-                    /*step([$class: "RundeckNotifier",
+                   								 /*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
 										  nodeFilters: "",
 										  options: """
 											   operations=disableTraffic.sh
-                         cluster: ${clusters[i]}
+                        								 cluster: ${clusters[i]}
 											""",
 										  rundeckInstance: "DR-RUNDECK",
 										  shouldFailTheBuild: true,
