@@ -38,10 +38,10 @@ String NWProdClusterList = buildScript(NW_PROD_cluster_list)
 String NWDRClusterList = buildScript(NW_DR_cluster_list)
 String nwitems = populateItems(nwdefault_item,NW_PROD_cluster_list,NW_DR_cluster_list)
 // Methods to build groovy scripts to populate data
-String buildScript(List values){
-  return "return $values"
+String buildScript(List nwvalues){
+  return "return $nwvalues"
 }
-String populateItems(List default_item, List NWProdClusterList, List NWDRClusterList){
+String populateItems(List nwdefault_item, List NWProdClusterList, List NWDRClusterList){
 return """if(NWEnvironment.equals('PROD')){
 		         return $NWProdClusterList
 		}
@@ -49,7 +49,7 @@ return """if(NWEnvironment.equals('PROD')){
 		return $NWDRClusterList
 		}
 		else{
-		return $default_item
+		return $nwdefault_item
 		}
 	"""
 }
