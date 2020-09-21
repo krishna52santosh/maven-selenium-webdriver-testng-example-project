@@ -176,13 +176,7 @@ pipeline {
 										  tags: "",
 										  tailLog: true]) */
 										  
-										  stages {
-											stage('Testing stage inside stage') {
-												steps {
-													echo 'Test stage inside stage'
-												}
-											}
-										}
+										
 										echo "${clusters[i]} cluster deployment was successfull ...."
 									}
 								}
@@ -366,7 +360,16 @@ pipeline {
 				   }
 				  }
 				 }
-				
+				 
+		stage('Test stage inside stage'){
+			  stages {
+											stage('Testing stage inside stage') {
+												steps {
+													echo 'Test stage inside stage'
+												}
+											}
+										}
+		}
 
 	/*
 		stage('Send email') {
