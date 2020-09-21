@@ -57,10 +57,10 @@ return """if(NetWorkClusterEnvironment.equals('PROD')){
 	// Declarative Scripting
 	properties([
 		parameters([
-			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Environment]]],
-			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]],
-			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'NetWorkClusterEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  NetWorkClusterEnvironment]]],
-			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'NetworkCluster', referencedParameters: 'NetWorkClusterEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: nwitems]]]
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', description: 'Deployment Environment,Select Prod/DR', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Environment]]],
+			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', description: 'Deployment Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]],
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'NetWorkClusterEnvironment', description: 'On which Environment traffic cluster want to disable ', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  NetWorkClusterEnvironment]]],
+			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'NetworkCluster', description: 'Select which Network cluster want to disable', referencedParameters: 'NetWorkClusterEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: nwitems]]]
 		
 		])
 	])
@@ -95,12 +95,12 @@ pipeline {
 		stage ('Disable Traffic on Environment') {
 				steps{
 				script{
-					switch(params.Environment) {
+					switch(params.NetWorkClusterEnvironment) {
 						  case "PROD":
-								echo "Executing at ${params.Environment} ...."
-								echo "Executing at ${params.Cluster} cluster ...."
+								echo "Executing at ${params.NetWorkClusterEnvironment} ...."
+								echo "Executing at ${params.NetworkCluster} cluster ...."
 								//String cname= echo 
-								String[] clusters = params.Cluster.split(',')
+								String[] clusters = params.NetworkCluster.split(',')
 								for (int i = 0; i < clusters.size(); ++i) {
 									echo "Testing the ${clusters[i]} cluster"
 									/*step([$class: "RundeckNotifier",
@@ -121,9 +121,9 @@ pipeline {
 								
 							break
 						  case "DR":
-								echo "Executing at ${params.Environment} ...."
-								echo "Executing at ${params.Cluster} cluster ...."
-								String[] clusters = params.Cluster.split(',')
+								echo "Executing at ${params.NetWorkClusterEnvironment} ...."
+								echo "Executing at ${params.NetworkCluster} cluster ...."
+								String[] clusters = params.NetworkCluster.split(',')
 								
 								
 								for (int i = 0; i < clusters.size(); ++i) {
@@ -145,7 +145,7 @@ pipeline {
 								
 							break
 						  default:
-							echo "Invalid environment ERROR..."
+							echo "Invalid NetWorkClusterEnvironment ERROR..."
 							break
 					}
 				  }
