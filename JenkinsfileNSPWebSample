@@ -91,7 +91,7 @@ pipeline {
 		}*
 
 		
-		stages{
+	stages{
 		stage('Check CRNumber') {
 		steps{
 		   script{
@@ -108,7 +108,7 @@ pipeline {
 
 
 		stage ('Disable Traffic on Environment') {
-				steps{
+			steps{
 				script{
 					switch(params.NetWorkClusterEnvironment) {
 						  case "PROD":
