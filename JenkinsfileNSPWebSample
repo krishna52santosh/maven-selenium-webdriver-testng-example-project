@@ -145,7 +145,7 @@ pipeline {
 								
 							break
 						  default:
-							echo "Invalid NetWorkClusterEnvironment ERROR..."
+							echo "Didn't selected any NetWorkClusterEnvironment..."
 							break
 					}
 				  }
