@@ -101,6 +101,25 @@ pipeline {
 				script{
 					String nwwcluster= params.Cluster
 								echo "Disable ${nwwcluster}"
+								
+					if(params.Cluster == "clstr-1"){
+						echo "Testing the webcl1 cluster"
+									/*step([$class: "RundeckNotifier",
+									  includeRundeckLogs: true,
+									  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
+									  nodeFilters: "",
+									  options: """
+										   operations=disableTraffic.sh
+										    cluster: webcl1
+										""",
+									  rundeckInstance: "PROD-RUNDECK",
+									  shouldFailTheBuild: true,
+									  shouldWaitForRundeckJob: true,
+									  tags: "",
+									  tailLog: true])
+					}
+					else "didnt selected webcl1 cluster"
+					
 					switch(params.NetWorkClusterEnvironment) {
 						  case "PROD":
 								echo "Executing at ${params.NetWorkClusterEnvironment} ...."
