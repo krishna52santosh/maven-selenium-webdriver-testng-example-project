@@ -15,14 +15,14 @@ String buildScript(List values){
 }
 String populateItems(List default_item, List ProdClusterList, List DRClusterList){
 return """if(Environment.equals('PROD')){
-		         return $ProdClusterList
-		}
-		else if(Environment.equals('DR')){
-		return $DRClusterList
-		}
-		else{
-		return $default_item
-		}
+	return $ProdClusterList
+	}
+	else if(Environment.equals('DR')){
+	return $DRClusterList
+	}
+	else{
+	return $default_item
+	}
 	"""
 }
 
@@ -43,14 +43,14 @@ String nwbuildScript(List nwvalues){
 }
 String nwpopulateItems(List nwdefault_item, List NWProdClusterList, List NWDRClusterList){
 return """if(NetWorkClusterEnvironment.equals('PROD')){
-		    return $NWProdClusterList
-		}
-		else if(NetWorkClusterEnvironment.equals('DR')){
-		return $NWDRClusterList
-		}
-		else{
-		return $nwdefault_item
-		}
+	return $NWProdClusterList
+	}
+	else if(NetWorkClusterEnvironment.equals('DR')){
+	return $NWDRClusterList
+	}
+	else{
+	return $nwdefault_item
+	}
 	"""
 }
 	// Properties step to set the Active choice parameters via 
@@ -73,7 +73,6 @@ pipeline {
 			string(name: "CR_NUMBER", description: 'The CR Number')
 			choice(name: "Action", choices: ["Release", "RollBack"])
 			choice(name: "ContentAction", choices: ["WithWebserverContent", "WithOutWebserverContent"])
-			choice(name: "TrafficCluster", choices: ["webcl1"])
 		}
 
 		
