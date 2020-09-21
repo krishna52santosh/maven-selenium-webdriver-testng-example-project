@@ -99,6 +99,8 @@ pipeline {
 		stage ('Disable Traffic on Environment') {
 			steps{
 				script{
+					String ncluster= params.Cluster
+								echo "Disable ${ncluster}"
 					switch(params.NetWorkClusterEnvironment) {
 						  case "PROD":
 								echo "Executing at ${params.NetWorkClusterEnvironment} ...."
