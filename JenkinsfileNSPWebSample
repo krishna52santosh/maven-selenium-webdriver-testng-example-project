@@ -176,11 +176,13 @@ pipeline {
 										  tags: "",
 										  tailLog: true]) */
 										  
-										  stage('Test Stage'){
-										  steps{
-										   
-											bat 'echo "Test stage in stage"'
-										}}
+										  stages {
+											stage('Testing stage inside stage') {
+												steps {
+													echo 'Test stage inside stage'
+												}
+											}
+										}
 										echo "${clusters[i]} cluster deployment was successfull ...."
 									}
 								}
