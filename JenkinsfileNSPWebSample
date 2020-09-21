@@ -178,9 +178,9 @@ pipeline {
 										  
 										  stage('Test Stage'){
 										  steps{
-										  script{ 
+										   
 											bat 'echo "Test stage in stage"'
-										}}}
+										}}
 										echo "${clusters[i]} cluster deployment was successfull ...."
 									}
 								}
