@@ -88,7 +88,7 @@ pipeline {
 			string(name: "CR_NUMBER", description: 'The CR Number')
 			choice(name: "Action", choices: ["Release", "RollBack"], description: 'Select Release if you want to make deploy, select Rollback if you want to rollback to previous changes')
 			//choice(name: "ContentAction", choices: ["WithWebserverContent", "WithOutWebserverContent"], description: 'Want deploy with Content changes or Without')
-		}*
+		}*/
 
 		
 	stages{
