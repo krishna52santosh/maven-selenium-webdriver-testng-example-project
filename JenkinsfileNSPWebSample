@@ -61,8 +61,8 @@ return """if(NetWorkClusterEnvironment.equals('PROD')){
 			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', description: 'Deployment Environment,Select Prod/DR', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Environment]]],
 			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', description: 'Deployment Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]],
 			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'ContentAction', description: 'Want deploy with Content changes or Without', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  ContentAction]]],
-			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'NetWorkClusterEnvironment', description: 'On which Environment traffic cluster want to disable ', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  NetWorkClusterEnvironment]]],
-			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'NetworkCluster', description: 'Select which Network cluster want to disable', referencedParameters: 'NetWorkClusterEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: nwitems]]]
+			//[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'NetWorkClusterEnvironment', description: 'On which Environment traffic cluster want to disable ', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  NetWorkClusterEnvironment]]],
+			//[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'NetworkCluster', description: 'Select which Network cluster want to disable', referencedParameters: 'NetWorkClusterEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: nwitems]]]
 		
 		])
 	])
@@ -105,6 +105,8 @@ pipeline {
 								echo "Executing at ${params.NetworkCluster} cluster ...."
 								//String cname= echo 
 								String[] clusters = params.NetworkCluster.split(',')
+								String ncluster= params.Cluster
+								echo "Disable ${ncluster}" 
 								for (int i = 0; i < clusters.size(); ++i) {
 									echo "Testing the ${clusters[i]} cluster"
 									/*step([$class: "RundeckNotifier",
