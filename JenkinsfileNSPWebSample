@@ -72,8 +72,8 @@ pipeline {
 		agent any
 		
 		
-		properties([
-		parameters([
+		
+		parameters{
 			string(name: "CR_NUMBER", description: 'The CR Number'),
 			choice(name: "Action", choices: ["Release", "RollBack"], description: 'Select Release if you want to make deploy, select Rollback if you want to rollback to previous changes'),
 			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', description: 'Deployment Environment,Select Prod/DR', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Environment]]],
@@ -82,8 +82,8 @@ pipeline {
 			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'NetWorkClusterEnvironment', description: 'On which Environment traffic cluster want to disable ', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  NetWorkClusterEnvironment]]],
 			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'NetworkCluster', description: 'Select which Network cluster want to disable', referencedParameters: 'NetWorkClusterEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: nwitems]]]
 		
-			])
-		])
+		}
+		
 		/* parameters {
 			string(name: "CR_NUMBER", description: 'The CR Number')
 			choice(name: "Action", choices: ["Release", "RollBack"], description: 'Select Release if you want to make deploy, select Rollback if you want to rollback to previous changes')
