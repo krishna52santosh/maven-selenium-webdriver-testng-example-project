@@ -59,6 +59,7 @@ return """if(NetWorkClusterEnvironment.equals('PROD')){
 		parameters([
 			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', description: 'Deployment Environment,Select Prod/DR', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Environment]]],
 			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', description: 'Deployment Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]],
+			choice(name: "ContentAction", choices: ["WithWebserverContent", "WithOutWebserverContent"], description: 'Want deploy with Content changes or Without')
 			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'NetWorkClusterEnvironment', description: 'On which Environment traffic cluster want to disable ', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  NetWorkClusterEnvironment]]],
 			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'NetworkCluster', description: 'Select which Network cluster want to disable', referencedParameters: 'NetWorkClusterEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: nwitems]]]
 		
@@ -72,7 +73,7 @@ pipeline {
 		 parameters {
 			string(name: "CR_NUMBER", description: 'The CR Number')
 			choice(name: "Action", choices: ["Release", "RollBack"], description: 'Select Release if you want to make deploy, select Rollback if you want to rollback to previous changes')
-			choice(name: "ContentAction", choices: ["WithWebserverContent", "WithOutWebserverContent"], description: 'Want deploy with Content changes or Without')
+			//choice(name: "ContentAction", choices: ["WithWebserverContent", "WithOutWebserverContent"], description: 'Want deploy with Content changes or Without')
 		}
 
 		
@@ -175,8 +176,7 @@ pipeline {
 										  shouldWaitForRundeckJob: true,
 										  tags: "",
 										  tailLog: true]) */
-										  
-										
+									
 										echo "${clusters[i]} cluster deployment was successfull ...."
 									}
 								}
@@ -360,16 +360,7 @@ pipeline {
 				   }
 				  }
 				 }
-				 
-		stage('Test stage inside stage'){
-			  stages {
-											stage('Testing stage inside stage') {
-												steps {
-													echo 'Test stage inside stage'
-												}
-											}
-										}
-		}
+				
 
 	/*
 		stage('Send email') {
