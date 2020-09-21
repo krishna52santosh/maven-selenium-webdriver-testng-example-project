@@ -15,13 +15,13 @@ String buildScript(List values){
 }
 String populateItems(List default_item, List ProdClusterList, List DRClusterList){
 return """if(Environment.equals('PROD')){
-	return $ProdClusterList
+	 return $ProdClusterList
 	}
 	else if(Environment.equals('DR')){
-	return $DRClusterList
+	 return $DRClusterList
 	}
 	else{
-	return $default_item
+	 return $default_item
 	}
 	"""
 }
@@ -36,20 +36,20 @@ List nwdefault_item = ["\"Not Applicable\""]
 String NetWorkClusterEnvironment = buildScript(NetworkCluster_list)
 String NWProdClusterList = buildScript(NW_PROD_cluster_list)
 String NWDRClusterList = buildScript(NW_DR_cluster_list)
-String nwitems = populateItems(nwdefault_item,NW_PROD_cluster_list,NW_DR_cluster_list)
+String nwitems = nwpopulateItems(nwdefault_item,NW_PROD_cluster_list,NW_DR_cluster_list)
 // Methods to build groovy scripts to populate data
 String nwbuildScript(List nwvalues){
   return "return $nwvalues"
 }
 String nwpopulateItems(List nwdefault_item, List NWProdClusterList, List NWDRClusterList){
 return """if(NetWorkClusterEnvironment.equals('PROD')){
-	return $NWProdClusterList
+	 return $NWProdClusterList
 	}
 	else if(NetWorkClusterEnvironment.equals('DR')){
-	return $NWDRClusterList
+	 return $NWDRClusterList
 	}
 	else{
-	return $nwdefault_item
+	 return $nwdefault_item
 	}
 	"""
 }
