@@ -116,7 +116,7 @@ pipeline {
 									  shouldFailTheBuild: true,
 									  shouldWaitForRundeckJob: true,
 									  tags: "",
-									  tailLog: true])
+									  tailLog: true])*/
 					}
 					else "didnt selected webcl1 cluster"
 					
