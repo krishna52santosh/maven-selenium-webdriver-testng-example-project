@@ -101,7 +101,7 @@ pipeline {
 				script{
 					//String nwwcluster= params.Cluster
 						//		echo "Disable ${nwwcluster}"
-					switch(params.NetWorkClusterEnvironment) {
+					switch(params.Environment) {
 						  case "PROD":
 								//echo "Executing at ${params.NetWorkClusterEnvironment} ...."
 								//echo "Executing at ${params.NetworkCluster} cluster ...."
