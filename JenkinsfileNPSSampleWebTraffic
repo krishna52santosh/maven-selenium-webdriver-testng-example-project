@@ -41,18 +41,9 @@ pipeline {
 		
 		 parameters {
 			string(name: "CR_NUMBER", description: 'The CR Number')
-			choice(name: "TrafficAction", choices: ["Enable", "Disable"])
+			choice(name: "TrafficAction", choices: ["Enable", "Disable", "Status"])
 		}
-		environment {
-		//def server = Artifactory.server('eCom-Artifactory')
-		//def rtMaven = Artifactory.newMavenBuild()
-		//def buildInfo = Artifactory.newBuildInfo()
-		//env.JAVA_HOME="${tool 'JDK1.8.0_111'}"
-		//env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
-		 userInput = ""
-		 didTimeout = false
-		}
-		
+	
 	stages{
 		stage('Check CRNumber') {
 			steps{
@@ -82,7 +73,7 @@ pipeline {
 									String[] clusters = params.Cluster.split(',')
 									
 									
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										echo "Enabling the ${clusters[i]} cluster"
                     								/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
@@ -107,7 +98,7 @@ pipeline {
 									String[] clusters = params.Cluster.split(',')
 									
 									
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										echo "Enabling the ${clusters[i]} cluster"
                   								  /*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
@@ -139,7 +130,7 @@ pipeline {
 									String[] clusters = params.Cluster.split(',')
 									
 									echo "disableTraffic"
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										echo "Disabling the ${clusters[i]} cluster"
                     								  /*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
@@ -164,7 +155,7 @@ pipeline {
 									String[] clusters = params.Cluster.split(',')
 									
 									
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										echo "Disabling the ${clusters[i]} cluster"
                    								 /*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
@@ -187,6 +178,64 @@ pipeline {
 							  break
 						}
 					  break
+					  
+					  case "Status":
+							switch(params.Environment) {
+							  case "PROD":
+									echo "Executing at ${params.Environment} ...."
+									echo "Executing at ${params.Cluster} cluster ...."
+									String[] clusters = params.Cluster.split(',')
+									
+									echo "Traffic Status Check PROD"
+									for (int i = 0; i < clusters.size(); i++) {
+										echo "Status of the ${clusters[i]} cluster"
+                    								  /*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
+										  nodeFilters: "",
+										  options: """
+											   operations=trafficStatus.sh
+                         									cluster: ${clusters[i]}
+											""",
+										  rundeckInstance: "PROD-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									}
+									
+									
+							  break
+							  case "DR":
+									echo "Executing at ${params.Environment} ...."
+									echo "Executing at ${params.Cluster} cluster ...."
+									String[] clusters = params.Cluster.split(',')
+									
+									echo "Traffic Status Check DR"
+									for (int i = 0; i < clusters.size(); i++) {
+										echo "Status the ${clusters[i]} cluster"
+                   								 /*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
+										  nodeFilters: "",
+										  options: """
+											   operations=trafficStatus.sh
+                        								 cluster: ${clusters[i]}
+											""",
+										  rundeckInstance: "DR-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									}
+									
+						      break
+							  default:
+								echo "Invalid environment ERROR..."
+							  break
+						}
+					  break
+					 
 					  default: 
 						println("No matching Action found!!"); 
 					}
