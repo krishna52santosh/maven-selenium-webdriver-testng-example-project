@@ -104,9 +104,9 @@ pipeline {
 								String[] clusters= params.Cluster.split(',')
 								for (int i = 0; i < clusters.size(); ++i) {
 									echo "Testing the ${clusters[i]} cluster"
-									j=i
-									((j=j+1))
-									echo "webcl"$j
+									//j=i
+									//((j=j+1))
+									//echo "webcl"$j
 									echo "webcl"((i=i+1))
 									if(clusters[i] == "clstr-1"){
 											echo "Testing the webcl1 cluster"
