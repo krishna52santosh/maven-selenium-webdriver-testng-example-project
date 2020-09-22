@@ -360,7 +360,7 @@ pipeline {
 					
 					
 				    }
-					else echo "Selected ${params.DeployContent}"
+					else echo "Not Selected Content deploy"
 				   }
 				  }
 				 }
