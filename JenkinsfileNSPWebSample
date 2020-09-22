@@ -60,7 +60,7 @@ return """if(NetWorkClusterEnvironment.equals('PROD')){
 		parameters([
 			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', description: 'Deployment Environment,Select Prod/DR', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Environment]]],
 			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', description: 'Deployment Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]],
-			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'ContentAction', description: 'Want deploy with Content changes or Without', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  ContentAction]]],
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'DeployContent', description: 'Want deploy with Content changes or Without', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  ContentAction]]],
 			//[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'NetWorkClusterEnvironment', description: 'On which Environment traffic cluster want to disable ', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  NetWorkClusterEnvironment]]],
 			//[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'NetworkCluster', description: 'Select which Network cluster want to disable', referencedParameters: 'NetWorkClusterEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: nwitems]]]
 		
@@ -99,19 +99,11 @@ pipeline {
 		stage ('Disable Traffic on Environment') {
 			steps{
 				script{
-					//String nwwcluster= params.Cluster
-						//		echo "Disable ${nwwcluster}"
 					switch(params.Environment) {
 						  case "PROD":
-								//echo "Executing at ${params.NetWorkClusterEnvironment} ...."
-								//echo "Executing at ${params.NetworkCluster} cluster ...."
-								//String cname= echo 
-								//String[] clusters = params.NetworkCluster.split(',')
 								String[] clusters= params.Cluster.split(',')
-								//echo "Disable ${ncluster}" 
 								for (int i = 0; i < clusters.size(); ++i) {
 									echo "Testing the ${clusters[i]} cluster"
-									//ncluster=${clusters[i]}
 									if(clusters[i] == "clstr-1"){
 											echo "Testing the webcl1 cluster"
 											echo "Disable webcl1 cluster"
@@ -130,44 +122,32 @@ pipeline {
 														  tailLog: true])*/
 										}
 										else "didnt selected webcl1 cluster"
-									/*step([$class: "RundeckNotifier",
-									  includeRundeckLogs: true,
-									  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
-									  nodeFilters: "",
-									  options: """
-										   operations=disableTraffic.sh
-										    cluster: ${clusters[i]} 
-										""",
-									  rundeckInstance: "PROD-RUNDECK",
-									  shouldFailTheBuild: true,
-									  shouldWaitForRundeckJob: true,
-									  tags: "",
-									  tailLog: true]) */
 								}
 								
 								
 							break
 						  case "DR":
-								echo "Executing at ${params.NetWorkClusterEnvironment} ...."
-								echo "Executing at ${params.NetworkCluster} cluster ...."
-								String[] clusters = params.NetworkCluster.split(',')
-								
-								
+								String[] clusters= params.Cluster.split(',')
 								for (int i = 0; i < clusters.size(); ++i) {
 									echo "Testing the ${clusters[i]} cluster"
-									/*step([$class: "RundeckNotifier",
-									  includeRundeckLogs: true,
-									  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
-									  nodeFilters: "",
-									  options: """
-										   operations=disableTraffic.sh
-										    cluster: ${clusters[i]} 
-										""",
-									  rundeckInstance: "DR-RUNDECK",
-									  shouldFailTheBuild: true,
-									  shouldWaitForRundeckJob: true,
-									  tags: "",
-									  tailLog: true]) */
+									if(clusters[i] == "clstr-1"){
+											echo "Testing the dc1 cluster"
+											echo "Disable dc1 cluster"
+														/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
+														  nodeFilters: "",
+														  options: """
+															   operations=disableTraffic.sh
+																cluster: webcl1
+															""",
+														  rundeckInstance: "PROD-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
+										}
+										else "didnt selected dc1 cluster"
 								}
 								
 							break
@@ -287,7 +267,7 @@ pipeline {
 				stage('Deploying Content into Environment') {
 				 steps{
 					script{
-					 if(params.ContentAction == "Yes"){
+					 if(params.DeployContent == "Yes"){
 					  switch(params.Action) {
 						  case "Release":
 								echo "Releasing changes into ${params.Environment}"
@@ -382,7 +362,7 @@ pipeline {
 					
 					
 				    }
-					else echo "Selected ${params.ContentAction}"
+					else echo "Selected ${params.DeployContent}"
 				   }
 				  }
 				 }
