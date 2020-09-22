@@ -26,7 +26,7 @@ return """if(Environment.equals('PROD')){
 	"""
 }
 
-List ContentAction_list = ["\"WithWebserverContent\"","\"WithOutWebserverContent\""]
+List ContentAction_list = ["\"No\"","\"Yes\""]
 String ContentAction = buildScript(ContentAction_list)
 
 // network clusters selection
@@ -99,37 +99,36 @@ pipeline {
 		stage ('Disable Traffic on Environment') {
 			steps{
 				script{
-					String nwwcluster= params.Cluster
-								echo "Disable ${nwwcluster}"
-								
-					if(params.Cluster == "clstr-1"){
-						echo "Testing the webcl1 cluster"
-									/*step([$class: "RundeckNotifier",
-									  includeRundeckLogs: true,
-									  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
-									  nodeFilters: "",
-									  options: """
-										   operations=disableTraffic.sh
-										    cluster: webcl1
-										""",
-									  rundeckInstance: "PROD-RUNDECK",
-									  shouldFailTheBuild: true,
-									  shouldWaitForRundeckJob: true,
-									  tags: "",
-									  tailLog: true])*/
-					}
-					else "didnt selected webcl1 cluster"
-					
+					//String nwwcluster= params.Cluster
+						//		echo "Disable ${nwwcluster}"
 					switch(params.NetWorkClusterEnvironment) {
 						  case "PROD":
-								echo "Executing at ${params.NetWorkClusterEnvironment} ...."
-								echo "Executing at ${params.NetworkCluster} cluster ...."
+								//echo "Executing at ${params.NetWorkClusterEnvironment} ...."
+								//echo "Executing at ${params.NetworkCluster} cluster ...."
 								//String cname= echo 
-								String[] clusters = params.NetworkCluster.split(',')
-								String ncluster= params.Cluster
-								echo "Disable ${ncluster}" 
-								for (int i = 0; i < clusters.size(); ++i) {
-									echo "Testing the ${clusters[i]} cluster"
+								//String[] clusters = params.NetworkCluster.split(',')
+								String ncluster= params.Cluster.split(',')
+								//echo "Disable ${ncluster}" 
+								for (int i = 0; i < ncluster.size(); ++i) {
+									echo "Testing the ${ncluster[i]} cluster"
+									if(${ncluster[i]} == "clstr-1"){
+											echo "Testing the webcl1 cluster"
+											cho "Disable webcl1 cluster"
+														/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
+														  nodeFilters: "",
+														  options: """
+															   operations=disableTraffic.sh
+																cluster: webcl1
+															""",
+														  rundeckInstance: "PROD-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
+										}
+										else "didnt selected webcl1 cluster"
 									/*step([$class: "RundeckNotifier",
 									  includeRundeckLogs: true,
 									  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
@@ -287,7 +286,7 @@ pipeline {
 				stage('Deploying Content into Environment') {
 				 steps{
 					script{
-					 if(params.ContentAction == "WithWebserverContent"){
+					 if(params.ContentAction == "Yes"){
 					  switch(params.Action) {
 						  case "Release":
 								echo "Releasing changes into ${params.Environment}"
