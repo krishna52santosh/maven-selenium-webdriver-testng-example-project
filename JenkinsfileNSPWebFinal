@@ -69,7 +69,7 @@ pipeline {
 					switch(params.Environment) {
 						  case "PROD":
 								String[] clusters= params.Cluster.split(',')
-								for (int i = 0; i < clusters.size(); ++i) {
+								for (int i = 0; i < clusters.size(); i++) {
 									echo "Testing the ${clusters[i]} cluster"
 									int j = i + 1
 									echo "webcl${j}"
@@ -94,7 +94,7 @@ pipeline {
 							break
 						  case "DR":
 								String[] clusters= params.Cluster.split(',')
-								for (int i = 0; i < clusters.size(); ++i) {
+								for (int i = 0; i < clusters.size(); i++) {
 									echo "Testing the ${clusters[i]} cluster"
 									int j = i + 1
 									echo "dc${j}"
@@ -134,7 +134,7 @@ pipeline {
 								if (params.Environment == "PROD"){
 									echo "Start Deploying WAR into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
@@ -154,7 +154,7 @@ pipeline {
 								else if (params.Environment == "DR"){
 									echo "Start Deploying WAR into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
@@ -179,7 +179,7 @@ pipeline {
 								if (params.Environment == "PROD"){
 									echo "Start Deploying WAR into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
@@ -200,7 +200,7 @@ pipeline {
 									
 									echo "Start Deploying WAR into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
@@ -239,7 +239,7 @@ pipeline {
 								if (params.Environment == "PROD"){
 									echo "Start Deploying content into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "09eaad93-6f36-40ec-b74b-fdce33cce4fc",
@@ -258,7 +258,7 @@ pipeline {
 								else if (params.Environment == "DR"){
 									echo "Start Deploying content into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "09eaad93-6f36-40ec-b74b-fdce33cce4fc",
@@ -282,7 +282,7 @@ pipeline {
 								if (params.Environment == "PROD"){
 									echo "Start Deploying content into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "09eaad93-6f36-40ec-b74b-fdce33cce4fc",
@@ -301,7 +301,7 @@ pipeline {
 								else if (params.Environment == "DR"){
 									echo "Start Deploying content into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "09eaad93-6f36-40ec-b74b-fdce33cce4fc",
