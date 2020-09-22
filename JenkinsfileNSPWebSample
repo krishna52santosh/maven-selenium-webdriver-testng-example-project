@@ -107,8 +107,8 @@ pipeline {
 									//j=i
 									//((j=j+1))
 									//echo "webcl"$j
-									i=((i=i+1))
-									echo "webcl"$i
+									j=i++
+									echo "webcl"$j
 									if(clusters[i] == "clstr-1"){
 											echo "Testing the webcl1 cluster"
 											echo "Disable webcl1 cluster"
