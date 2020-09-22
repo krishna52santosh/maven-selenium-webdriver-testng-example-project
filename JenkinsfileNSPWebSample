@@ -107,11 +107,12 @@ pipeline {
 								//echo "Executing at ${params.NetworkCluster} cluster ...."
 								//String cname= echo 
 								//String[] clusters = params.NetworkCluster.split(',')
-								String ncluster= params.Cluster.split(',')
+								String clusters= params.Cluster.split(',')
 								//echo "Disable ${ncluster}" 
-								for (int i = 0; i < ncluster.size(); ++i) {
-									echo "Testing the ${ncluster[i]} cluster"
-									if(${ncluster[i]} == "clstr-1"){
+								for (int i = 0; i < clusters.size(); ++i) {
+									echo "Testing the ${clusters[i]} cluster"
+									//ncluster=${clusters[i]}
+									if(clusters[i] == "clstr-1"){
 											echo "Testing the webcl1 cluster"
 											cho "Disable webcl1 cluster"
 														/*step([$class: "RundeckNotifier",
