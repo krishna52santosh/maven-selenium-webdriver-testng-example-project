@@ -104,9 +104,6 @@ pipeline {
 								String[] clusters= params.Cluster.split(',')
 								for (int i = 0; i < clusters.size(); ++i) {
 									echo "Testing the ${clusters[i]} cluster"
-									//j=i
-									//((j=j+1))
-									//echo "webcl"$j
 									int j = i + 1
 									echo "webcl${j}"
 									echo "disabling Traffic on webcl${j} cluster"
@@ -116,7 +113,7 @@ pipeline {
 														  nodeFilters: "",
 														  options: """
 															   operations=disableTraffic.sh
-																cluster: webcl1
+																cluster: webcl${j}
 															""",
 														  rundeckInstance: "PROD-RUNDECK",
 														  shouldFailTheBuild: true,
@@ -142,7 +139,7 @@ pipeline {
 														  nodeFilters: "",
 														  options: """
 															   operations=disableTraffic.sh
-																cluster: webcl1
+																cluster: webcl${j}
 															""",
 														  rundeckInstance: "PROD-RUNDECK",
 														  shouldFailTheBuild: true,
