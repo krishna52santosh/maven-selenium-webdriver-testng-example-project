@@ -109,10 +109,8 @@ pipeline {
 									//echo "webcl"$j
 									int j = i + 1
 									echo "webcl${j}"
-									if(clusters[i] == "clstr-1"){
-											echo "Testing the webcl1 cluster"
-											echo "Disable webcl1 cluster"
-														/*step([$class: "RundeckNotifier",
+									echo "disabling Traffic on webcl${j} cluster"
+									/*step([$class: "RundeckNotifier",
 														  includeRundeckLogs: true,
 														  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
 														  nodeFilters: "",
@@ -125,8 +123,7 @@ pipeline {
 														  shouldWaitForRundeckJob: true,
 														  tags: "",
 														  tailLog: true])*/
-										}
-										else "didnt selected webcl1 cluster"
+									
 								}
 								
 								
@@ -135,10 +132,11 @@ pipeline {
 								String[] clusters= params.Cluster.split(',')
 								for (int i = 0; i < clusters.size(); ++i) {
 									echo "Testing the ${clusters[i]} cluster"
-									if(clusters[i] == "dc1"){
-											echo "Testing the dc1 cluster"
-											echo "Disable dc1 cluster"
-														/*step([$class: "RundeckNotifier",
+									int j = i + 1
+									echo "webcl${j}"
+									echo "disabling Traffic on webcl${j} cluster"
+									
+									/*step([$class: "RundeckNotifier",
 														  includeRundeckLogs: true,
 														  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
 														  nodeFilters: "",
@@ -151,8 +149,6 @@ pipeline {
 														  shouldWaitForRundeckJob: true,
 														  tags: "",
 														  tailLog: true])*/
-										}
-										else "didnt selected dc1 cluster"
 								}
 								
 							break
