@@ -1,0 +1,353 @@
+#!/usr/bin/env groovy
+
+// Define variables
+List Environment_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
+List DR_cluster_list = ["\"dc1\"","\"dc2\"","\"dc3\""]
+List PROD_cluster_list = ["\"clstr-1\""]
+List default_item = ["\"Not Applicable\""]
+String Environment = buildScript(Environment_list)
+String ProdClusterList = buildScript(PROD_cluster_list)
+String DRClusterList = buildScript(DR_cluster_list)
+String items = populateItems(default_item,PROD_cluster_list,DR_cluster_list)
+// Methods to build groovy scripts to populate data
+String buildScript(List values){
+  return "return $values"
+}
+String populateItems(List default_item, List ProdClusterList, List DRClusterList){
+return """if(Environment.equals('PROD')){
+	 return $ProdClusterList
+	}
+	else if(Environment.equals('DR')){
+	 return $DRClusterList
+	}
+	else{
+	 return $default_item
+	}
+	"""
+}
+
+List ContentAction_list = ["\"No\"","\"Yes\""]
+String ContentAction = buildScript(ContentAction_list)
+
+	// Properties step to set the Active choice parameters via 
+	// Declarative Scripting
+	properties([
+		parameters([
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', description: 'Deployment Environment,Select Prod/DR', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Environment]]],
+			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', description: 'Deployment Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]],
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'DeployContent', description: 'Want deploy with Content changes or Without', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  ContentAction]]]
+		])
+	])
+
+pipeline {
+			
+		agent any
+		parameters {
+			string(name: "CR_NUMBER", description: 'The CR Number')
+			choice(name: "Action", choices: ["Release", "RollBack"], description: 'Select Release if you want to make deploy, select Rollback if you want to rollback to previous changes')
+		}
+	
+	stages{
+		stage('Check CRNumber') {
+			steps{
+			   script{
+				if (params.CR_NUMBER.size() < 6) {
+					echo "Invalid change request number : ${params.CR_NUMBER}"
+					currentBuild.result = 'ABORTED'
+					error('Release Aborted.')
+				}
+				
+				
+			}
+			}
+		}
+
+
+		stage ('Disable Traffic on Environment') {
+			steps{
+				script{
+					switch(params.Environment) {
+						  case "PROD":
+								String[] clusters= params.Cluster.split(',')
+								for (int i = 0; i < clusters.size(); ++i) {
+									echo "Testing the ${clusters[i]} cluster"
+									int j = i + 1
+									echo "webcl${j}"
+									echo "disabling Traffic on webcl${j} cluster"
+									/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
+														  nodeFilters: "",
+														  options: """
+															   operations=disableTraffic.sh
+																cluster: webcl${j}
+															""",
+														  rundeckInstance: "PROD-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
+									
+								}
+								
+								
+							break
+						  case "DR":
+								String[] clusters= params.Cluster.split(',')
+								for (int i = 0; i < clusters.size(); ++i) {
+									echo "Testing the ${clusters[i]} cluster"
+									int j = i + 1
+									echo "dc${j}"
+									echo "disabling Traffic on dc${j} cluster"
+									
+									/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
+														  nodeFilters: "",
+														  options: """
+															   operations=disableTraffic.sh
+																cluster: webcl${j}
+															""",
+														  rundeckInstance: "PROD-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
+								}
+								
+							break
+						  default:
+							echo "Didn't selected any NetWorkClusterEnvironment..."
+							break
+					}
+				  }
+				  }
+		}					
+			
+		stage('Deploying WAR into Environment') {
+			steps{
+				script{
+					
+					switch(params.Action) {
+						  case "Release":
+								echo "Releasing changes into ${params.Environment}"
+								if (params.Environment == "PROD"){
+									echo "Start Deploying WAR into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+										  nodeFilters: "",
+										  options: """
+												cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "PROD-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									
+										echo "${clusters[i]} cluster deployment was successfull ...."
+									}
+								}
+								else if (params.Environment == "DR"){
+									echo "Start Deploying WAR into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+										  nodeFilters: "",
+										  options: """
+											   cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "DR-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									
+										echo "${clusters[i]} cluster deployment was successfull ...."
+									}
+								}
+								else echo "Wrong Environment"
+								
+							break
+						  case "RollBack":
+								echo "Rolling back changes from ${params.Environment} "
+								if (params.Environment == "PROD"){
+									echo "Start Deploying WAR into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+										  nodeFilters: "",
+										  options: """
+												cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "PROD-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									
+									echo "${clusters[i]} cluster deployment was successfull ...."
+									}
+								}
+								else if (params.Environment == "DR"){
+									
+									echo "Start Deploying WAR into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+										  nodeFilters: "",
+										  options: """
+											   cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "DR-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									 echo "${clusters[i]} cluster deployment was successfull ...."
+									}
+								}
+								else echo "Wrong Environment"
+							
+							break
+						  default:
+							echo "Invalid environment ERROR..."
+							break
+					}
+					
+					
+				}
+			}
+		}
+				
+		stage('Deploying Content into Environment') {
+			steps{
+				script{
+					if(params.DeployContent == "Yes"){
+					  switch(params.Action) {
+						  case "Release":
+								echo "Releasing changes into ${params.Environment}"
+								if (params.Environment == "PROD"){
+									echo "Start Deploying content into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "09eaad93-6f36-40ec-b74b-fdce33cce4fc",
+										  nodeFilters: "",
+										  options: """
+												cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "PROD-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									 echo "${clusters[i]} cluster deployment was successfull ...."
+									}
+								}
+								else if (params.Environment == "DR"){
+									echo "Start Deploying content into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "09eaad93-6f36-40ec-b74b-fdce33cce4fc",
+										  nodeFilters: "",
+										  options: """
+											   cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "DR-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+										echo "${clusters[i]} cluster deployment was successfull ...."
+									}
+								}
+								else echo "Wrong Environment"
+								
+							break
+						  case "RollBack":
+								echo "Rolling back changes from ${params.Environment} "
+								if (params.Environment == "PROD"){
+									echo "Start Deploying content into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "09eaad93-6f36-40ec-b74b-fdce33cce4fc",
+										  nodeFilters: "",
+										  options: """
+												cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "PROD-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									 echo "${clusters[i]} cluster deployment was successfull ...."
+									}
+								}
+								else if (params.Environment == "DR"){
+									echo "Start Deploying content into Environment ${params.Environment}" 
+									String[] clusters = params.Cluster.split(',')
+									for (int i = 0; i < clusters.size(); ++i) {
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "09eaad93-6f36-40ec-b74b-fdce33cce4fc",
+										  nodeFilters: "",
+										  options: """
+											   cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "DR-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									 echo "${clusters[i]} cluster deployment was successfull ...."
+									}
+								}
+								else echo "Wrong Environment"
+							
+							break
+						  default:
+							echo "Invalid environment ERROR..."
+							break
+					 }
+					
+					
+				    }
+					else echo "Not Selected Content deploy"
+			   }
+			}
+		}
+				
+
+	/*
+	stage('Send email') {
+			emailext attachLog: false,
+			body: '${SCRIPT, template="groovy-html.template"}',
+			compressLog: true, mimeType: 'text/html',
+			recipientProviders: [culprits(), brokenBuildSuspects()],
+			replyTo: '$DEFAULT_REPLYTO',
+			subject: '$DEFAULT_SUBJECT',
+			to:'sureshbabu'
+			
+			to: 'vshanmugavelu,smandadapu,ravindrard@virtusa.com,graja@virtusa.com,kgpraveen@virtusa.com,prathyushavp@virtusa.com,sarithad@virtusa.com,rmanoharan,shravankumar.b@sonata-software.com,gdinakar@virtusa.com,nareshbabuv@virtusa.com,ranjithgaddam@virtusa.com,sanghamittrap@virtusa.com,Shreyab@virtusa.com,rmoodapally,mohammedaahmed,rdevireddy,radhikan@virtusa.com,msambaraju,cc:AKapoor,cc:rwarrier,cc:sureshbabu'
+		
+	}*/	
+
+
+
+ }
+}
