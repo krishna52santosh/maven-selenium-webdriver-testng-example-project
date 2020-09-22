@@ -114,7 +114,7 @@ pipeline {
 									//ncluster=${clusters[i]}
 									if(clusters[i] == "clstr-1"){
 											echo "Testing the webcl1 cluster"
-											cho "Disable webcl1 cluster"
+											echo "Disable webcl1 cluster"
 														/*step([$class: "RundeckNotifier",
 														  includeRundeckLogs: true,
 														  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
