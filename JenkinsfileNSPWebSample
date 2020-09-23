@@ -29,70 +29,37 @@ return """if(Environment.equals('PROD')){
 List ContentAction_list = ["\"No\"","\"Yes\""]
 String ContentAction = buildScript(ContentAction_list)
 
-// network clusters selection
-List NetworkCluster_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
-List NW_DR_cluster_list = ["\"ndc1\"","\"ndc2\"","\"ndc3\""]
-List NW_PROD_cluster_list = ["\"webcl1\""]
-List nwdefault_item = ["\"Not Applicable\""]
-String NetWorkClusterEnvironment = buildScript(NetworkCluster_list)
-String NWProdClusterList = buildScript(NW_PROD_cluster_list)
-String NWDRClusterList = buildScript(NW_DR_cluster_list)
-String nwitems = nwpopulateItems(nwdefault_item,NW_PROD_cluster_list,NW_DR_cluster_list)
-// Methods to build groovy scripts to populate data
-String nwbuildScript(List nwvalues){
-  return "return $nwvalues"
-}
-String nwpopulateItems(List nwdefault_item, List NWProdClusterList, List NWDRClusterList){
-return """if(NetWorkClusterEnvironment.equals('PROD')){
-	 return $NWProdClusterList
-	}
-	else if(NetWorkClusterEnvironment.equals('DR')){
-	 return $NWDRClusterList
-	}
-	else{
-	 return $nwdefault_item
-	}
-	"""
-}
 	// Properties step to set the Active choice parameters via 
 	// Declarative Scripting
 	properties([
 		parameters([
 			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', description: 'Deployment Environment,Select Prod/DR', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Environment]]],
 			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', description: 'Deployment Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]],
-			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'DeployContent', description: 'Want deploy with Content changes or Without', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  ContentAction]]],
-			//[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'NetWorkClusterEnvironment', description: 'On which Environment traffic cluster want to disable ', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  NetWorkClusterEnvironment]]],
-			//[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'NetworkCluster', description: 'Select which Network cluster want to disable', referencedParameters: 'NetWorkClusterEnvironment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: nwitems]]]
-		
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'DeployContent', description: 'Want deploy with Content changes or Without', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  ContentAction]]]
 		])
 	])
 
 pipeline {
 			
 		agent any
-		
-		
-		
 		parameters {
 			string(name: "CR_NUMBER", description: 'The CR Number')
 			choice(name: "Action", choices: ["Release", "RollBack"], description: 'Select Release if you want to make deploy, select Rollback if you want to rollback to previous changes')
-			//choice(name: "ContentAction", choices: ["WithWebserverContent", "WithOutWebserverContent"], description: 'Want deploy with Content changes or Without')
 		}
-
-		
+	
 	stages{
 		stage('Check CRNumber') {
-		steps{
-		   script{
-			if (params.CR_NUMBER.size() < 6) {
-				echo "Invalid change request number : ${params.CR_NUMBER}"
-				currentBuild.result = 'ABORTED'
-				error('Release Aborted.')
+			steps{
+			   script{
+				if (params.CR_NUMBER.size() < 6) {
+					echo "Invalid change request number : ${params.CR_NUMBER}"
+					currentBuild.result = 'ABORTED'
+					error('Release Aborted.')
+				}
+				
+				
 			}
-			
-			
-		}
-		}
+			}
 		}
 
 
@@ -102,7 +69,7 @@ pipeline {
 					switch(params.Environment) {
 						  case "PROD":
 								String[] clusters= params.Cluster.split(',')
-								for (int i = 0; i < clusters.size(); ++i) {
+								for (int i = 0; i < clusters.size(); i++) {
 									echo "Testing the ${clusters[i]} cluster"
 									int j = i + 1
 									echo "webcl${j}"
@@ -120,6 +87,25 @@ pipeline {
 														  shouldWaitForRundeckJob: true,
 														  tags: "",
 														  tailLog: true])*/
+														  
+									if(clusters[i] == "clstr-1"){
+											echo "Testing the webcl1 cluster"
+											echo "Disable webcl1 cluster"
+														/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
+														  nodeFilters: "",
+														  options: """
+															   operations=disableTraffic.sh
+																cluster: webcl1
+															""",
+														  rundeckInstance: "PROD-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
+										}
+										else "didnt selected webcl1 cluster"
 									
 								}
 								
@@ -127,7 +113,7 @@ pipeline {
 							break
 						  case "DR":
 								String[] clusters= params.Cluster.split(',')
-								for (int i = 0; i < clusters.size(); ++i) {
+								for (int i = 0; i < clusters.size(); i++) {
 									echo "Testing the ${clusters[i]} cluster"
 									int j = i + 1
 									echo "dc${j}"
@@ -155,11 +141,11 @@ pipeline {
 					}
 				  }
 				  }
-				 }					
+		}					
 			
-				stage('Deploying WAR into Environment') {
-				 steps{
-					script{
+		stage('Deploying WAR into Environment') {
+			steps{
+				script{
 					
 					switch(params.Action) {
 						  case "Release":
@@ -167,7 +153,7 @@ pipeline {
 								if (params.Environment == "PROD"){
 									echo "Start Deploying WAR into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
@@ -187,7 +173,7 @@ pipeline {
 								else if (params.Environment == "DR"){
 									echo "Start Deploying WAR into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
@@ -212,7 +198,7 @@ pipeline {
 								if (params.Environment == "PROD"){
 									echo "Start Deploying WAR into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
@@ -233,7 +219,7 @@ pipeline {
 									
 									echo "Start Deploying WAR into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
@@ -259,20 +245,20 @@ pipeline {
 					
 					
 				}
-				}
-				}
+			}
+		}
 				
-				stage('Deploying Content into Environment') {
-				 steps{
-					script{
-					 if(params.DeployContent == "Yes"){
+		stage('Deploying Content into Environment') {
+			steps{
+				script{
+					if(params.DeployContent == "Yes"){
 					  switch(params.Action) {
 						  case "Release":
 								echo "Releasing changes into ${params.Environment}"
 								if (params.Environment == "PROD"){
 									echo "Start Deploying content into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "09eaad93-6f36-40ec-b74b-fdce33cce4fc",
@@ -291,7 +277,7 @@ pipeline {
 								else if (params.Environment == "DR"){
 									echo "Start Deploying content into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "09eaad93-6f36-40ec-b74b-fdce33cce4fc",
@@ -315,7 +301,7 @@ pipeline {
 								if (params.Environment == "PROD"){
 									echo "Start Deploying content into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "09eaad93-6f36-40ec-b74b-fdce33cce4fc",
@@ -334,7 +320,7 @@ pipeline {
 								else if (params.Environment == "DR"){
 									echo "Start Deploying content into Environment ${params.Environment}" 
 									String[] clusters = params.Cluster.split(',')
-									for (int i = 0; i < clusters.size(); ++i) {
+									for (int i = 0; i < clusters.size(); i++) {
 										/*step([$class: "RundeckNotifier",
 										  includeRundeckLogs: true,
 										  jobId: "09eaad93-6f36-40ec-b74b-fdce33cce4fc",
@@ -361,13 +347,13 @@ pipeline {
 					
 				    }
 					else echo "Not Selected Content deploy"
-				   }
-				  }
-				 }
+			   }
+			}
+		}
 				
 
 	/*
-		stage('Send email') {
+	stage('Send email') {
 			emailext attachLog: false,
 			body: '${SCRIPT, template="groovy-html.template"}',
 			compressLog: true, mimeType: 'text/html',
@@ -378,7 +364,7 @@ pipeline {
 			
 			to: 'vshanmugavelu,smandadapu,ravindrard@virtusa.com,graja@virtusa.com,kgpraveen@virtusa.com,prathyushavp@virtusa.com,sarithad@virtusa.com,rmanoharan,shravankumar.b@sonata-software.com,gdinakar@virtusa.com,nareshbabuv@virtusa.com,ranjithgaddam@virtusa.com,sanghamittrap@virtusa.com,Shreyab@virtusa.com,rmoodapally,mohammedaahmed,rdevireddy,radhikan@virtusa.com,msambaraju,cc:AKapoor,cc:rwarrier,cc:sureshbabu'
 		
-		}*/	
+	}*/	
 
 
 
