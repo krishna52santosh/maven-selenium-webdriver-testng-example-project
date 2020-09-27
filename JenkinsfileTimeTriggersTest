@@ -1,0 +1,85 @@
+#!/usr/bin/env groovy
+node () {
+
+	def server = Artifactory.server('eCom-Artifactory')
+	def rtGradle = Artifactory.newGradleBuild()
+	def buildInfo = Artifactory.newBuildInfo()
+	env.JAVA_HOME="${tool 'jdk1.8.0_111'}"
+	env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
+	def userInput = []
+	def didTimeout = false
+	def envName = ""
+	
+	stage('Choose Environment(s) to Deploy') {
+	
+		try {
+			timeout(time: 120, unit: 'SECONDS') {                   
+				userInput = input(id: 'chooseOptions',
+				message: 'Select environment(s) to deploy',    
+				parameters: [                           
+				  [id: 'SIT', $class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'SIT'],    
+				  [id: 'UAT', $class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'UAT'],
+				  [id: 'STG', $class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'STG'],
+				  [id: 'PLT', $class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'PLT'],
+				  [id: 'PRD', $class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Release']])
+			}
+		} catch(err) { // timeout reached or input false
+			def user = err.getCauses()[0].getUser()
+			if('SYSTEM' == user.toString()) { // SYSTEM means timeout.
+				didTimeout = true
+			} else {
+				//userInput = false
+				echo "Aborted by: [${user}]"
+			}
+		}
+
+		if (userInput.size() > 0) {
+		
+			stage ('Checkout') {
+				checkout scm
+			}
+
+			stage ('Artifactory configuration') {
+				rtGradle.tool = 'Gradle 2.2.1' // Tool name from Jenkins configuration
+				rtGradle.deployer repo: 'ecom-release-local', server: server
+				rtGradle.resolver repo: 'ecom-vrepo', server: server
+			}
+
+			stage ('Config Build Info') {
+				buildInfo.env.capture = true
+				buildInfo.env.filter.addInclude("*")
+				buildInfo.env.filter.addExclude("DONT_COLLECT*")
+			}
+
+			stage ('Set Gradle Env') {
+				rtGradle.deployer.artifactDeploymentPatterns.addExclude("*.war")
+				rtGradle.usesPlugin = true // Artifactory plugin already defined in build script
+			}
+
+			stage ('Build Source Code') {
+				rtGradle.run rootDir: '${WORKSPACE}/MobileWeb/', buildFile: 'build.gradle', tasks: 'clean build -x test', buildInfo: buildInfo
+			}
+
+			stage ('Publish Build Info') {
+				server.publishBuildInfo buildInfo
+			}
+			
+			userInput.each { key, value ->
+				if ("$value" == "true") {
+					stage("Deploying into $key") {
+						envName = "$key"
+						echo "Start Deploying into $key Environment"
+						sh "/softwares/jenkins/scripts/mbe-web-deploy.sh $key"
+						echo "$key deployment was successful."	
+					}
+				}
+			}
+		}  else {
+			// do something else
+			echo "No environment selected, deployment was not successful."
+			currentBuild.result = 'FAILURE'
+		} 
+	}
+	
+	
+}
