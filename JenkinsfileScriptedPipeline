@@ -1,0 +1,164 @@
+#!/usr/bin/env groovy
+
+// Define variables
+List Environment_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
+List DR_cluster_list = ["\"dc1\"","\"dc2\"","\"dc3\""]
+List PROD_cluster_list = ["\"clstr-1\""]
+List default_item = ["\"Not Applicable\""]
+String Environment = buildScript(Environment_list)
+String ProdClusterList = buildScript(PROD_cluster_list)
+String DRClusterList = buildScript(DR_cluster_list)
+String items = populateItems(default_item,PROD_cluster_list,DR_cluster_list)
+// Methods to build groovy scripts to populate data
+String buildScript(List values){
+  return "return $values"
+}
+String populateItems(List default_item, List ProdClusterList, List DRClusterList){
+return """if(Environment.equals('PROD')){
+	 return $ProdClusterList
+	}
+	else if(Environment.equals('DR')){
+	 return $DRClusterList
+	}
+	else{
+	 return $default_item
+	}
+	"""
+}
+
+List ContentAction_list = ["\"No\"","\"Yes\""]
+String ContentAction = buildScript(ContentAction_list)
+
+
+//Map Prod = [
+  //  C1: ['linux', 'windows', 'mac'],
+  //  C2: ['firefox', 'chrome', 'safari', 'edge']
+//]
+
+	// Properties step to set the Active choice parameters via 
+	// Declarative Scripting
+	properties([
+		parameters([
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', description: 'Deployment Environment,Select Prod/DR', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Environment]]],
+			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', description: 'Deployment Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]],
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'DeployContent', description: 'Want deploy with Content changes or Without', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  ContentAction]]]
+		])
+	])
+	
+node {
+	
+	properties(
+    [
+        parameters(
+            [string(description: 'The CR Number', name: 'CR_NUMBER'),
+             choice(name: "Action", choices: ["Release", "RollBack"], description: 'Select Release if you want to make deploy, select Rollback if you want to rollback to previous changes')]
+            )
+
+    ]
+    )   
+	/*
+	parameters {
+			string(name: "CR_NUMBER", description: 'The CR Number')
+			choice(name: "Action", choices: ["Release", "RollBack"], description: 'Select Release if you want to make deploy, select Rollback if you want to rollback to previous changes')
+		}*/
+		
+		
+	stage('Check CRNumber') {
+					if (params.CR_NUMBER.size() < 6) {
+						echo "Invalid change request number : ${params.CR_NUMBER}"
+						currentBuild.result = 'ABORTED'
+						error('Release Aborted.')
+					}
+
+	}
+
+	switch(params.Action) {
+		case "Release":
+				switch(params.Environment){
+					case "PROD":
+					String[] clusters= params.Cluster.split(',')
+						for (int i = 0; i < clusters.size(); i++)
+						{
+							stage('Disable traffic')
+							{
+							}
+							stage('Deploy in cluster')
+							{
+							}
+							stage('Content Deploy')
+							{
+							}
+							stage('Enable Traffic')
+							{
+							}
+						}
+					break
+					case "DR":
+					String[] clusters= params.Cluster.split(',')
+						for (int i = 0; i < clusters.size(); i++)
+						{
+							stage('Disable traffic')
+							{
+							}
+							stage('Deploy in cluster')
+							{
+							}
+							stage('Content Deploy')
+							{
+							}
+							stage('Enable Traffic')
+							{
+							}
+						}
+					break
+				default:
+					echo "Didn't selected any NetWorkClusterEnvironment..."
+					break
+			}
+		
+		case "Revert":
+				switch(params.Environment){
+					case "PROD":
+					String[] clusters= params.Cluster.split(',')
+						for (int i = 0; i < clusters.size(); i++)
+						{
+							stage('Disable traffic')
+							{
+							}
+							stage('Deploy in cluster')
+							{
+							}
+							stage('Content Deploy')
+							{
+							}
+							stage('Enable Traffic')
+							{
+							}
+						}
+					case "DR":
+					String[] clusters= params.Cluster.split(',')
+						for (int i = 0; i < clusters.size(); i++)
+						{
+							stage('Disable traffic')
+							{
+							}
+							stage('Deploy in cluster')
+							{
+							}
+							stage('Content Deploy')
+							{
+							}
+							stage('Enable Traffic')
+							{
+							}
+						}
+					default:
+					echo "Didn't selected any NetWorkClusterEnvironment..."
+					break
+			}
+		default:
+		echo "Invalid environment ERROR..."
+		break			
+				
+	}
+}
