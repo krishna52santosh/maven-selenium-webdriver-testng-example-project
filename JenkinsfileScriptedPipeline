@@ -35,6 +35,11 @@ def ProdCluster = [
 	"clstr-1" : "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
 	"clstr-2" : "Test Cluster"
 	]
+	
+def DRCluster = [
+	"dc1" : "dc1",
+	"dc2" : "dc2"
+	]
 //Map Prod = [
 //    clstr-1: ['4e5ec2de-f7c1-40ce-81e0-64462dc04fd8']
 //]
@@ -63,20 +68,7 @@ node {
 
 	}
 	
-	/*stage('Assign Values to map') {
-		script {
-					sh "rm -f ${WORKSPACE}/env.groovy"
-                    sh "echo \"ProdCluster = [ clstr-1 : '4e5ec2de-f7c1-40ce-81e0-64462dc04fd8' ]\" > env.groovy"
-                    sh "echo \"DRCluster = [ DC1 : 'Dc1' , DC2 : 'dc2' , DC3 : 'dc3' ]\" >> env.groovy"
-                }
-	}*/
-	stage('Activities') {
-		/*script{
-			println "loading env groovy"
-			sh "cat ${WORKSPACE}/env.groovy"
-			load "${WORKSPACE}/env.groovy"
-			println "env groovy loaded"
-			}*/
+
 		switch(params.Action) {
 			
 			case "Release":
@@ -88,49 +80,73 @@ node {
 							String[] clusters= params.Cluster.split(',')
 								for (int i = 0; i < clusters.size(); i++)
 								{
-									stage("Disable traffic in Prod cluster: " + "${clusters[i]}")
-									{
-										//println map.clstr-1
-										for(element in ProdCluster) {
+								
+									for(element in ProdCluster) {
 											if (clusters[i] == element.key ) {
 												echo "${element.key} ${element.value}"
+												JobID = element.value
+												echo "Job id is ${JobID}"
+													
 											}
 											else echo "didn't selected ${element.key} cluster"
+									}
+											
+											stage("Disable traffic in Prod cluster: " + "${clusters[i]}")
+												{ 	
+													echo "Stage Disable"
+													echo "Job id is ${JobID}"
+												}
+											stage("Deploy in cluster in prod cluster: " + "${clusters[i]}")
+												{
+													echo "Stage Deploy"
+													echo "Job id is ${JobID}"
+												}
+											stage("Content Deploy in prod cluster: " + "${clusters[i]}")
+												{
+													echo "Stage Content"
+													echo "Job id is ${JobID}"
+												}
+											stage("Enable Traffic in Prod cluster: " + "${clusters[i]}")
+												{
+													echo "Stage Enable traffic"
+													echo "Job id is ${JobID}"
+												}
+											
 											//echo "${element.key} ${element.value}"
 											//println $KEY
-										}
-									}
-									stage("Deploy in cluster in prod cluster: " + "${clusters[i]}")
-									{
-									}
-									stage("Content Deploy in prod cluster: " + "${clusters[i]}")
-									{
-									}
-									stage("Enable Traffic in Prod cluster: " + "${clusters[i]}")
-									{
-									}
+											
+										
+									
 								}
 						break;
 						case "DR":
-
-							 
-							map = DRCluster
-
 						String[] clusters= params.Cluster.split(',')
 							for (int i = 0; i < clusters.size(); i++)
 							{
-								stage('Disable traffic in DR ${params.Action}')
-								{
-									println map.DC1
+								for(element in DRCluster) {
+											if (clusters[i] == element.key ) {
+												echo "${element.key} ${element.value}"
+												JobID = element.value
+												echo "Job id is ${JobID}"
+													
+											}
+											else echo "didn't selected ${element.key} cluster"
 								}
-								stage('Deploy in cluster in DR')
+								stage("Disable traffic in DR cluster: " + "${clusters[i]}")
 								{
+									echo "Job id is ${JobID}"
 								}
-								stage('Content Deploy in DR')
+								stage("Deploy in cluster in DR cluster: " + "${clusters[i]}")
 								{
+									echo "Job id is ${JobID}"
 								}
-								stage('Enable Traffic in DR')
+								stage("Content Deploy in DR cluster: " + "${clusters[i]}")
 								{
+									echo "Job id is ${JobID}"
+								}
+								stage("Enable Traffic in DR cluster: " + "${clusters[i]}")
+								{
+									echo "Job id is ${JobID}"
 								}
 							}
 						break;
@@ -140,23 +156,36 @@ node {
 				}
 			break;
 			
-			case "Revert":
+			case "RollBack":
 					switch(params.Environment){
 						case "PROD":
 							String[] clusters= params.Cluster.split(',')
 								for (int i = 0; i < clusters.size(); i++)
 								{
-									stage('Disable traffic in Prod on ${params.Environment}')
-									{
+									for(element in ProdCluster) {
+											if (clusters[i] == element.key ) {
+												echo "${element.key} ${element.value}"
+												JobID = element.value
+												echo "Job id is ${JobID}"
+													
+											}
+											else echo "didn't selected ${element.key} cluster"
 									}
-									stage('Deploy in cluster in Prod ${params.Environment}')
+									stage("Disable traffic in Prod cluster: " + "${clusters[i]}")
 									{
+										echo "Job id is ${JobID}"
 									}
-									stage('Content Deploy in Prod ${params.Environment}')
+									stage("Deploy in cluster in Prod cluster: " + "${clusters[i]}")
 									{
+										echo "Job id is ${JobID}"
 									}
-									stage('Enable Traffic in Prod ${params.Environment}')
+									stage("Content Deploy in Prod cluster: " + "${clusters[i]}")
 									{
+										echo "Job id is ${JobID}"
+									}
+									stage("Enable Traffic in Prod cluster: " + "${clusters[i]}")
+									{
+										echo "Job id is ${JobID}"
 									}
 								}
 						break;
@@ -164,17 +193,30 @@ node {
 							String[] clusters= params.Cluster.split(',')
 								for (int i = 0; i < clusters.size(); i++)
 								{
-									stage('Disable traffic in DR ${params.Environment}')
-									{
+									for(element in DRCluster) {
+											if (clusters[i] == element.key ) {
+												echo "${element.key} ${element.value}"
+												JobID = element.value
+												echo "Job id is ${JobID}"
+													
+											}
+											else echo "didn't selected ${element.key} cluster"
 									}
-									stage('Deploy in cluster in DR ${params.Environment}')
+									stage("Disable traffic in DR cluster: " + "${clusters[i]}")
 									{
+										echo "Job id is ${JobID}"
 									}
-									stage('Content Deploy in DR ${params.Environment}')
+									stage("Deploy in cluster in DR cluster: " + "${clusters[i]}")
 									{
+										echo "Job id is ${JobID}"
 									}
-									stage('Enable Traffic in DR${params.Environment}')
+									stage("Content Deploy in DR cluster: " + "${clusters[i]}")
 									{
+										echo "Job id is ${JobID}"
+									}
+									stage("Enable Traffic in DR cluster: " + "${clusters[i]}")
+									{
+										echo "Job id is ${JobID}"
 									}
 								}
 						break;
@@ -188,5 +230,4 @@ node {
 				break;			
 					
 		}
-	}
 }
