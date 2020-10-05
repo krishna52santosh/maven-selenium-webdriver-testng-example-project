@@ -33,16 +33,14 @@ String ContentAction = buildScript(ContentAction_list)
 
 def ProdCluster = [
 	"clstr-1" : "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
-	"clstr-2" : "Test Cluster"
+	"clstr-2" : "TestCluster,Test2"
 	]
 	
 def DRCluster = [
 	"dc1" : "dc1",
 	"dc2" : "dc2"
 	]
-//Map Prod = [
-//    clstr-1: ['4e5ec2de-f7c1-40ce-81e0-64462dc04fd8']
-//]
+
 
 	// Properties step to set the Active choice parameters via 
 	// Declarative Scripting
@@ -86,6 +84,10 @@ node {
 												echo "${element.key} ${element.value}"
 												JobID = element.value
 												echo "Job id is ${JobID}"
+												String[] eID= element.value.split(',')
+												for (int j = 0; j < eID.size(); j++){
+													echo "${eID[j]}"
+												}
 													
 											}
 											else echo "didn't selected ${element.key} cluster"
