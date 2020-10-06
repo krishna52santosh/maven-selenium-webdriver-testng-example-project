@@ -1,0 +1,260 @@
+#!/usr/bin/env groovy
+
+// Define variables
+List Action_list = ["\"Release\"","\"RollBack\""]
+List Environment_list = ["\"Select:selected\"","\"PROD\"","\"DR\""]
+List DR_cluster_list = ["\"dc1\"","\"dc2\"","\"dc3\""]
+List PROD_cluster_list = ["\"clstr-1\"","\"clstr-2\""]
+List default_item = ["\"Not Applicable\""]
+String Action = buildScript(Action_list)
+String Environment = buildScript(Environment_list)
+String ProdClusterList = buildScript(PROD_cluster_list)
+String DRClusterList = buildScript(DR_cluster_list)
+String items = populateItems(default_item,PROD_cluster_list,DR_cluster_list)
+// Methods to build groovy scripts to populate data
+String buildScript(List values){
+  return "return $values"
+}
+String populateItems(List default_item, List ProdClusterList, List DRClusterList){
+return """if(Environment.equals('PROD')){
+	 return $ProdClusterList
+	}
+	else if(Environment.equals('DR')){
+	 return $DRClusterList
+	}
+	else{
+	 return $default_item
+	}
+	"""
+}
+
+List ContentAction_list = ["\"No\"","\"Yes\""]
+String ContentAction = buildScript(ContentAction_list)
+
+List EnableTraffic_list = ["\"No\"","\"Yes\""]
+String EnableTraffic = buildScript(EnableTraffic_list)
+
+def ProdCluster = [
+	"clstr-1" : "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
+	"clstr-2" : "TestCluster,Test2"
+	]
+	
+def DRCluster = [
+	"dc1" : "dc1",
+	"dc2" : "dc2",
+	"dc3" : "dc3"
+	]
+
+
+	// Properties step to set the Active choice parameters via 
+	// Declarative Scripting
+	properties([
+		parameters([
+			[$class: 'StringParameterDefinition', defaultValue: '', description: 'The CR Number', name: 'CR_NUMBER'],
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Action', description: 'Action,Select Release/RollBack', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Action]]],
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', description: 'Deployment Environment,Select Prod/DR', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Environment]]],
+			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', description: 'Deployment Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]],
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'DeployContent', description: 'Want deploy with Content changes or Without', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  ContentAction]]],
+			[$class: 'ChoiceParameter', choiceType: 'PT_RADIO',   name: 'EnableTraffic', description: 'Does cluster traffic enable after deploy without verify?', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  EnableTraffic]]]
+		])
+	])
+	
+node {
+	
+
+	stage('Check CRNumber') {
+					if (params.CR_NUMBER.size() < 6) {
+						echo "Invalid change request number : ${params.CR_NUMBER}"
+						currentBuild.result = 'ABORTED'
+						error('Release Aborted.')
+					}
+
+	}
+	
+		switch(params.Action) {
+			
+			case "Release":
+					switch(params.Environment){
+						case "PROD":
+							String[] clusters= params.Cluster.split(',')
+								try{
+								for (int i = 0; i < clusters.size(); i++)
+								{
+								
+									for(element in ProdCluster) {
+											if (clusters[i] == element.key) {
+												echo "${element.key} ${element.value}"
+												JobID = element.value
+												echo "Job id is ${JobID}"						
+											}
+											else {
+												echo "didn't selected ${element.key} cluster"
+											}
+									}
+											
+											stage("Disable traffic in Prod cluster: " + "${clusters[i]}")
+												{ 	
+													echo "Stage Disable"
+													
+													echo "Job id is ${JobID}"
+												}
+											stage("Deploy in cluster in prod cluster: " + "${clusters[i]}")
+												{
+													echo "Stage Deploy"
+													echo "Job id is ${JobID}"
+												}
+											stage("Content Deploy in prod cluster: " + "${clusters[i]}")
+												{
+													echo "Stage Content"
+													echo "Job id is ${JobID}"
+												}
+											stage("Enable Traffic in Prod cluster: " + "${clusters[i]}")
+												{
+													echo "Stage Enable traffic"
+													echo "Job id is ${JobID}"
+												}
+											
+											//echo "${element.key} ${element.value}"
+											//println $KEY
+											
+										
+									
+								}
+							}
+							catch (err){
+								echo "didnt selected any clusters so making this build failure"
+								currentBuild.result = 'FAILURE'
+							}
+						break;
+						case "DR":
+						String[] clusters= params.Cluster.split(',')
+						 try{
+							for (int i = 0; i < clusters.size(); i++)
+							{
+								for(element in DRCluster) {
+											if (clusters[i] == element.key ) {
+												echo "${element.key} ${element.value}"
+												JobID = element.value
+												echo "Job id is ${JobID}"
+													
+											}
+											else echo "didn't selected ${element.key} cluster"
+								}
+								stage("Disable traffic in DR cluster: " + "${clusters[i]}")
+								{
+									echo "Job id is ${JobID}"
+								}
+								stage("Deploy in cluster in DR cluster: " + "${clusters[i]}")
+								{
+									echo "Job id is ${JobID}"
+								}
+								stage("Content Deploy in DR cluster: " + "${clusters[i]}")
+								{
+									echo "Job id is ${JobID}"
+								}
+								stage("Enable Traffic in DR cluster: " + "${clusters[i]}")
+								{
+									echo "Job id is ${JobID}"
+								}
+							}
+						}
+						catch (err){
+								echo "didnt selected any clusters so making this build failure"
+								currentBuild.result = 'FAILURE'
+							}
+						break;
+					default:
+						echo "Didn't selected any clusters so making this build failure"
+						currentBuild.result = 'FAILURE'
+						break;
+				}
+			break;
+			
+			case "RollBack":
+					switch(params.Environment){
+						case "PROD":
+							String[] clusters= params.Cluster.split(',')
+							 try{
+								for (int i = 0; i < clusters.size(); i++)
+								{
+									for(element in ProdCluster) {
+											if (clusters[i] == element.key ) {
+												echo "${element.key} ${element.value}"
+												JobID = element.value
+												echo "Job id is ${JobID}"
+													
+											}
+											else echo "didn't selected ${element.key} cluster"
+									}
+									stage("Disable traffic in Prod cluster: " + "${clusters[i]}")
+									{
+										echo "Job id is ${JobID}"
+									}
+									stage("Deploy in cluster in Prod cluster: " + "${clusters[i]}")
+									{
+										echo "Job id is ${JobID}"
+									}
+									stage("Content Deploy in Prod cluster: " + "${clusters[i]}")
+									{
+										echo "Job id is ${JobID}"
+									}
+									stage("Enable Traffic in Prod cluster: " + "${clusters[i]}")
+									{
+										echo "Job id is ${JobID}"
+									}
+								}
+							}
+							catch (err){
+								echo "didnt selected any clusters so making this build failure"
+								currentBuild.result = 'FAILURE'
+							}
+						break;
+						case "DR":
+							String[] clusters= params.Cluster.split(',')
+							 try{
+								for (int i = 0; i < clusters.size(); i++)
+								{
+									for(element in DRCluster) {
+											if (clusters[i] == element.key ) {
+												echo "${element.key} ${element.value}"
+												JobID = element.value
+												echo "Job id is ${JobID}"
+													
+											}
+											else echo "didn't selected ${element.key} cluster"
+									}
+									stage("Disable traffic in DR cluster: " + "${clusters[i]}")
+									{
+										echo "Job id is ${JobID}"
+									}
+									stage("Deploy in cluster in DR cluster: " + "${clusters[i]}")
+									{
+										echo "Job id is ${JobID}"
+									}
+									stage("Content Deploy in DR cluster: " + "${clusters[i]}")
+									{
+										echo "Job id is ${JobID}"
+									}
+									stage("Enable Traffic in DR cluster: " + "${clusters[i]}")
+									{
+										echo "Job id is ${JobID}"
+									}
+								}
+							}
+							catch (err){
+								echo "didnt selected any clusters so making this build failure"
+								currentBuild.result = 'FAILURE'
+							}
+						break;
+						default:
+						echo "Didn't selected any clusters so making this build failure."
+						currentBuild.result = 'FAILURE'
+						break;
+				}
+			break;
+			default:
+				echo "Invalid Environment ERROR..."
+				break;			
+					
+		}
+}
