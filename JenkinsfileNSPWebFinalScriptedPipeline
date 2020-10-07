@@ -95,23 +95,73 @@ node {
 											stage("Disable traffic in Prod cluster: " + "${clusters[i]}")
 												{ 	
 													echo "Stage Disable"
-													
-													echo "Job id is ${JobID}"
+													echo "Deployment start on cluster ${clusters[i]}"
+													echo "RUNDECK Job id is ${JobID}"
+													/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "${JobID}",
+														  nodeFilters: "",
+														  options: """
+															   operations=disableTraffic.sh
+																cluster: ${clusters[i]}
+															""",
+														  rundeckInstance: "PROD-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
 												}
 											stage("Deploy in cluster in prod cluster: " + "${clusters[i]}")
 												{
 													echo "Stage Deploy"
 													echo "Job id is ${JobID}"
+														/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "${JobID}",
+														  nodeFilters: "",
+														  options: """
+																cluster: ${clusters[i]} 
+															""",
+														  rundeckInstance: "PROD-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true]) */
 												}
 											stage("Content Deploy in prod cluster: " + "${clusters[i]}")
 												{
 													echo "Stage Content"
 													echo "Job id is ${JobID}"
+													/*step([$class: "RundeckNotifier",
+													  includeRundeckLogs: true,
+													  jobId: "${JobID}",
+													  nodeFilters: "",
+													  options: """
+															cluster: ${clusters[i]} 
+														""",
+													  rundeckInstance: "PROD-RUNDECK",
+													  shouldFailTheBuild: true,
+													  shouldWaitForRundeckJob: true,
+													  tags: "",
+													  tailLog: true]) */
 												}
 											stage("Enable Traffic in Prod cluster: " + "${clusters[i]}")
 												{
 													echo "Stage Enable traffic"
 													echo "Job id is ${JobID}"
+													/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "${JobID}",
+														  nodeFilters: "",
+														  options: """
+															   operations=enableTraffic.sh
+																cluster: ${clusters[i]}
+															""",
+														  rundeckInstance: "PROD-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
 												}
 											
 											//echo "${element.key} ${element.value}"
@@ -142,19 +192,70 @@ node {
 								}
 								stage("Disable traffic in DR cluster: " + "${clusters[i]}")
 								{
-									echo "Job id is ${JobID}"
+									echo "RUNDECK Job id is ${JobID}"
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "${JobID}",
+										  nodeFilters: "",
+										  options: """
+											operations=disableTraffic.sh
+											cluster: ${clusters[i]}
+											""",
+										  rundeckInstance: "DR-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true])*/
 								}
 								stage("Deploy in cluster in DR cluster: " + "${clusters[i]}")
 								{
 									echo "Job id is ${JobID}"
+									/*step([$class: "RundeckNotifier",
+											  includeRundeckLogs: true,
+											  jobId: "${JobID}",
+											  nodeFilters: "",
+											  options: """
+													cluster: ${clusters[i]} 
+												""",
+											  rundeckInstance: "DR-RUNDECK",
+											  shouldFailTheBuild: true,
+											  shouldWaitForRundeckJob: true,
+											  tags: "",
+											  tailLog: true]) */
+									
 								}
 								stage("Content Deploy in DR cluster: " + "${clusters[i]}")
 								{
 									echo "Job id is ${JobID}"
+									/*step([$class: "RundeckNotifier",
+									  includeRundeckLogs: true,
+									  jobId: "${JobID}",
+									  nodeFilters: "",
+									  options: """
+										cluster: ${clusters[i]} 
+										""",
+									  rundeckInstance: "DR-RUNDECK",
+									  shouldFailTheBuild: true,
+									  shouldWaitForRundeckJob: true,
+									  tags: "",
+									  tailLog: true]) */
 								}
 								stage("Enable Traffic in DR cluster: " + "${clusters[i]}")
 								{
-									echo "Job id is ${JobID}"
+									echo "RUNDECK Job id is ${JobID}"
+									/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "${JobID}",
+														  nodeFilters: "",
+														  options: """
+															   operations=enableTraffic.sh
+																cluster: ${clusters[i]}
+															""",
+														  rundeckInstance: "DR-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
 								}
 							}
 						}
@@ -188,19 +289,69 @@ node {
 									}
 									stage("Disable traffic in Prod cluster: " + "${clusters[i]}")
 									{
-										echo "Job id is ${JobID}"
+										echo "RUNDECK Job id is ${JobID}"
+														/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "${JobID}",
+														  nodeFilters: "",
+														  options: """
+															   operations=disableTraffic.sh
+																cluster: ${clusters[i]}
+															""",
+														  rundeckInstance: "PROD-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
 									}
 									stage("Deploy in cluster in Prod cluster: " + "${clusters[i]}")
 									{
 										echo "Job id is ${JobID}"
+										/*step([$class: "RundeckNotifier",
+											  includeRundeckLogs: true,
+											  jobId: "${JobID}",
+											  nodeFilters: "",
+											  options: """
+													cluster: ${clusters[i]} 
+												""",
+											  rundeckInstance: "PROD-RUNDECK",
+											  shouldFailTheBuild: true,
+											  shouldWaitForRundeckJob: true,
+											  tags: "",
+											  tailLog: true]) */
 									}
 									stage("Content Deploy in Prod cluster: " + "${clusters[i]}")
 									{
 										echo "Job id is ${JobID}"
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "${JobID}",
+										  nodeFilters: "",
+										  options: """
+											cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "PROD-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
 									}
 									stage("Enable Traffic in Prod cluster: " + "${clusters[i]}")
 									{
-										echo "Job id is ${JobID}"
+										echo "RUNDECK Job id is ${JobID}"
+										/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "${JobID}",
+														  nodeFilters: "",
+														  options: """
+															   operations=enableTraffic.sh
+																cluster: ${clusters[i]}
+															""",
+														  rundeckInstance: "PROD-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
 									}
 								}
 							}
@@ -225,19 +376,69 @@ node {
 									}
 									stage("Disable traffic in DR cluster: " + "${clusters[i]}")
 									{
-										echo "Job id is ${JobID}"
+										echo "RUNDECK Job id is ${JobID}"
+										/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "${JobID}",
+														  nodeFilters: "",
+														  options: """
+															   operations=disableTraffic.sh
+																cluster: ${clusters[i]}
+															""",
+														  rundeckInstance: "DR-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
 									}
 									stage("Deploy in cluster in DR cluster: " + "${clusters[i]}")
 									{
 										echo "Job id is ${JobID}"
+										/*step([$class: "RundeckNotifier",
+											  includeRundeckLogs: true,
+											  jobId: "${JobID}",
+											  nodeFilters: "",
+											  options: """
+													cluster: ${clusters[i]} 
+												""",
+											  rundeckInstance: "DR-RUNDECK",
+											  shouldFailTheBuild: true,
+											  shouldWaitForRundeckJob: true,
+											  tags: "",
+											  tailLog: true]) */
 									}
 									stage("Content Deploy in DR cluster: " + "${clusters[i]}")
 									{
 										echo "Job id is ${JobID}"
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "${JobID}",
+										  nodeFilters: "",
+										  options: """
+											cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "DR-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
 									}
 									stage("Enable Traffic in DR cluster: " + "${clusters[i]}")
 									{
-										echo "Job id is ${JobID}"
+										echo "RUNDECK Job id is ${JobID}"
+										/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "${JobID}",
+														  nodeFilters: "",
+														  options: """
+															   operations=enableTraffic.sh
+																cluster: ${clusters[i]}
+															""",
+														  rundeckInstance: "DR-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
 									}
 								}
 							}
