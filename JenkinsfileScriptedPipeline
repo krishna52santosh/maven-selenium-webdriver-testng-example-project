@@ -31,14 +31,22 @@ return """if(Environment.equals('PROD')){
 List ContentAction_list = ["\"No\"","\"Yes\""]
 String ContentAction = buildScript(ContentAction_list)
 
+List EnableTraffic_list = ["\"No\"","\"Yes\""]
+String EnableTrafficAction = buildScript(EnableTraffic_list)
+
 def ProdCluster = [
-	"clstr-1" : "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8",
-	"clstr-2" : "TestCluster,Test2"
+	"clstr-1" : "e04098dc-748b-4f1f-9fa5-9b71184f81c5",
+	"clstr-2" : "TestCluster"
+	]
+
+def NetworkClusters = [
+	"webcl1" : "4e5ec2de-f7c1-40ce-81e0-64462dc04fd8,clstr-1,dc1",
+	"webcl2" : "TestCluster,clstr-2,dc2"
 	]
 	
 def DRCluster = [
 	"dc1" : "dc1",
-	"dc2" : "dc2"
+	"dc2" : "dc2",
 	]
 
 
@@ -46,11 +54,12 @@ def DRCluster = [
 	// Declarative Scripting
 	properties([
 		parameters([
-			[$class: 'StringParameterDefinition', defaultValue: 'None', description: 'The CR Number', name: 'CR_NUMBER'],
+			[$class: 'StringParameterDefinition', defaultValue: '', description: 'The CR Number', name: 'CR_NUMBER'],
 			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Action', description: 'Action,Select Release/RollBack', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Action]]],
 			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'Environment', description: 'Deployment Environment,Select Prod/DR', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  Environment]]],
 			[$class: 'CascadeChoiceParameter', choiceType: 'PT_CHECKBOX', name: 'Cluster', description: 'Deployment Cluster', referencedParameters: 'Environment', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: items]]],
-			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'DeployContent', description: 'Want deploy with Content changes or Without', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  ContentAction]]]
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'DeployContent', description: 'Want deploy with Content changes or Without', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  ContentAction]]],
+			[$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'EnableTraffic', description: 'Does cluster traffic enable after deploy without verify', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], script: [classpath: [], sandbox: false, script:  EnableTrafficAction]]]
 		])
 	])
 	
@@ -66,63 +75,145 @@ node {
 
 	}
 	
-
 		switch(params.Action) {
 			
 			case "Release":
 					switch(params.Environment){
 						case "PROD":
-							//println "mapping"
-							//map = ProdCluster
-							//println "mapping done"
 							String[] clusters= params.Cluster.split(',')
+								try{
 								for (int i = 0; i < clusters.size(); i++)
 								{
-								
-									for(element in ProdCluster) {
-											if (clusters[i] == element.key ) {
-												echo "${element.key} ${element.value}"
-												JobID = element.value
-												echo "Job id is ${JobID}"
-												String[] eID= element.value.split(',')
-												for (int j = 0; j < eID.size(); j++){
-													echo "${eID[j]}"
+									
+									for(element in NetworkClusters) {
+										String[] eID= element.value.split(',')
+												if (eID.contains(clusters[i])){
+														echo "JobID is ${eID[0]}"
+														TrafficJobID = eID[0]
+														TrafficClusterName = element.key
+														//echo "cluster name ${element.key}"
+													//for (int j = 0; j < eID.size(); j++){
+														//echo "JobID is ${eID[0]}"
+														//echo "eid ${eID[j]}"
+													//} 
 												}
-													
+												else {
+												echo "didn't selected ${element.key} cluster"
+												}
+									}
+									
+									for(element in ProdCluster) {
+											if (clusters[i] == element.key) {
+												echo "Cluster Name: ${element.key} RundeckJobID is: ${element.value}"
+												JobID = element.value
+												echo "RUNDECK Job id is ${JobID}"						
 											}
-											else echo "didn't selected ${element.key} cluster"
+											else {
+												echo "didn't selected ${element.key} cluster"
+											}
 									}
 											
-											stage("Disable traffic in Prod cluster: " + "${clusters[i]}")
+											stage("Disable traffic in Prod cluster: " + "${TrafficClusterName}")
 												{ 	
 													echo "Stage Disable"
-													echo "Job id is ${JobID}"
-												}
-											stage("Deploy in cluster in prod cluster: " + "${clusters[i]}")
-												{
-													echo "Stage Deploy"
-													echo "Job id is ${JobID}"
-												}
-											stage("Content Deploy in prod cluster: " + "${clusters[i]}")
-												{
-													echo "Stage Content"
-													echo "Job id is ${JobID}"
-												}
-											stage("Enable Traffic in Prod cluster: " + "${clusters[i]}")
-												{
-													echo "Stage Enable traffic"
-													echo "Job id is ${JobID}"
+													echo "Disable traffic start on cluster ${TrafficClusterName}"
+													echo "RUNDECK Job id is ${TrafficJobID}"
+													/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "${TrafficJobID}",
+														  nodeFilters: "",
+														  options: """
+															   operations=disableTraffic.sh
+																cluster: ${cName}
+															""",
+														  rundeckInstance: "PROD-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
 												}
 											
+												stage("Deploy in cluster in prod cluster: " + "${clusters[i]}")
+													{
+													
+														echo "Stage Deploy"
+														echo "Job id is ${JobID}"
+															/*step([$class: "RundeckNotifier",
+															  includeRundeckLogs: true,
+															  jobId: "${JobID}",
+															  nodeFilters: "",
+															  options: """
+																	cluster: ${clusters[i]} 
+																""",
+															  rundeckInstance: "PROD-RUNDECK",
+															  shouldFailTheBuild: true,
+															  shouldWaitForRundeckJob: true,
+															  tags: "",
+															  tailLog: true]) */
+													}
+											
+											
+											if (DeployContent == "Yes"){
+												stage("Content Deploy in prod cluster: " + "${clusters[i]}")
+													{
+														echo "Stage Content"
+														echo "Job id is ${JobID}"
+														/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "${JobID}",
+														  nodeFilters: "",
+														  options: """
+																cluster: ${clusters[i]} 
+															""",
+														  rundeckInstance: "PROD-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true]) */
+													}
+											}
+											else{
+												echo "content deploy didnt selected"
+											}
+											
+											if (EnableTraffic == "Yes") {
+												stage("Enable Traffic in Prod cluster: " + "${TrafficClusterName}")
+													{
+														echo "Stage Enable traffic"
+														echo "RUNDECK Job id is ${TrafficJobID}"
+														/*step([$class: "RundeckNotifier",
+															  includeRundeckLogs: true,
+															  jobId: "${TrafficJobID}",
+															  nodeFilters: "",
+															  options: """
+																   operations=enableTraffic.sh
+																	cluster: ${TrafficClusterName}
+																""",
+															  rundeckInstance: "PROD-RUNDECK",
+															  shouldFailTheBuild: true,
+															  shouldWaitForRundeckJob: true,
+															  tags: "",
+															  tailLog: true])*/
+													}
+											}
+											else {
 											//echo "${element.key} ${element.value}"
 											//println $KEY
+											echo "Enable traffic didnt selected"
+											}
 											
 										
 									
 								}
+							}
+							catch (err){
+								echo "didnt selected any clusters so making this build failure"
+								currentBuild.result = 'FAILURE'
+							}
 						break;
 						case "DR":
 						String[] clusters= params.Cluster.split(',')
+						 try{
 							for (int i = 0; i < clusters.size(); i++)
 							{
 								for(element in DRCluster) {
@@ -134,26 +225,110 @@ node {
 											}
 											else echo "didn't selected ${element.key} cluster"
 								}
-								stage("Disable traffic in DR cluster: " + "${clusters[i]}")
+								
+								for(element in NetworkClusters) {
+										String[] eID= element.value.split(',')
+												if (eID.contains(clusters[i])){
+														echo "JobID is ${eID[0]}"
+														TrafficJobID = eID[0]
+														TrafficClusterName = element.key
+														echo "cluster name ${element.key}"
+													//for (int j = 0; j < eID.size(); j++){
+														//echo "JobID is ${eID[0]}"
+														//echo "eid ${eID[j]}"
+													//} 
+												}
+												else {
+												echo "didn't selected ${element.key} cluster"
+												}
+								}
+								stage("Disable traffic in DR cluster: " + "${TrafficClusterName}")
 								{
-									echo "Job id is ${JobID}"
+									echo "RUNDECK Job id is ${TrafficJobID}"
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "${TrafficJobID}",
+										  nodeFilters: "",
+										  options: """
+											operations=disableTraffic.sh
+											cluster: ${TrafficClusterName}
+											""",
+										  rundeckInstance: "DR-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true])*/
 								}
 								stage("Deploy in cluster in DR cluster: " + "${clusters[i]}")
 								{
 									echo "Job id is ${JobID}"
+									/*step([$class: "RundeckNotifier",
+											  includeRundeckLogs: true,
+											  jobId: "${JobID}",
+											  nodeFilters: "",
+											  options: """
+													cluster: ${clusters[i]} 
+												""",
+											  rundeckInstance: "DR-RUNDECK",
+											  shouldFailTheBuild: true,
+											  shouldWaitForRundeckJob: true,
+											  tags: "",
+											  tailLog: true]) */
+									
 								}
-								stage("Content Deploy in DR cluster: " + "${clusters[i]}")
-								{
-									echo "Job id is ${JobID}"
+								if (DeployContent == "Yes"){
+									stage("Content Deploy in DR cluster: " + "${clusters[i]}")
+									{
+										echo "Job id is ${JobID}"
+										/*step([$class: "RundeckNotifier",
+										  includeRundeckLogs: true,
+										  jobId: "${JobID}",
+										  nodeFilters: "",
+										  options: """
+											cluster: ${clusters[i]} 
+											""",
+										  rundeckInstance: "DR-RUNDECK",
+										  shouldFailTheBuild: true,
+										  shouldWaitForRundeckJob: true,
+										  tags: "",
+										  tailLog: true]) */
+									}
 								}
-								stage("Enable Traffic in DR cluster: " + "${clusters[i]}")
-								{
-									echo "Job id is ${JobID}"
+								else {
+								echo "content deploy didnt selected"
 								}
+								if (EnableTraffic == "Yes") {
+									stage("Enable Traffic in DR cluster: " + "${TrafficJobID}")
+									{
+										echo "RUNDECK Job id is ${TrafficJobID}"
+										/*step([$class: "RundeckNotifier",
+															  includeRundeckLogs: true,
+															  jobId: "${TrafficJobID}",
+															  nodeFilters: "",
+															  options: """
+																   operations=enableTraffic.sh
+																	cluster: ${TrafficClusterName}
+																""",
+															  rundeckInstance: "DR-RUNDECK",
+															  shouldFailTheBuild: true,
+															  shouldWaitForRundeckJob: true,
+															  tags: "",
+															  tailLog: true])*/
+									}
+								}
+								else{
+									echo "Enable traffic didn't selected "
+								}
+							}
+						}
+						catch (err){
+								echo "didnt selected any clusters so making this build failure"
+								currentBuild.result = 'FAILURE'
 							}
 						break;
 					default:
-						echo "Didn't selected any NetWorkClusterEnvironment..."
+						echo "Didn't selected any clusters so making this build failure"
+						currentBuild.result = 'FAILURE'
 						break;
 				}
 			break;
@@ -162,6 +337,7 @@ node {
 					switch(params.Environment){
 						case "PROD":
 							String[] clusters= params.Cluster.split(',')
+							 try{
 								for (int i = 0; i < clusters.size(); i++)
 								{
 									for(element in ProdCluster) {
@@ -173,26 +349,109 @@ node {
 											}
 											else echo "didn't selected ${element.key} cluster"
 									}
-									stage("Disable traffic in Prod cluster: " + "${clusters[i]}")
+									
+									for(element in NetworkClusters) {
+										String[] eID= element.value.split(',')
+												if (eID.contains(clusters[i])){
+														echo "JobID is ${eID[0]}"
+														TrafficJobID = eID[0]
+														TrafficClusterName = element.key
+														echo "cluster name ${element.key}"
+													//for (int j = 0; j < eID.size(); j++){
+														//echo "JobID is ${eID[0]}"
+														//echo "eid ${eID[j]}"
+													//} 
+												}
+												else {
+												echo "didn't selected ${element.key} cluster"
+												}
+									}
+									stage("Disable traffic in Prod cluster: " + "${TrafficClusterName}")
 									{
-										echo "Job id is ${JobID}"
+										echo "RUNDECK Job id is ${TrafficJobID}"
+														/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "${TrafficJobID}",
+														  nodeFilters: "",
+														  options: """
+															   operations=disableTraffic.sh
+																cluster: ${TrafficClusterName}
+															""",
+														  rundeckInstance: "PROD-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
 									}
 									stage("Deploy in cluster in Prod cluster: " + "${clusters[i]}")
 									{
 										echo "Job id is ${JobID}"
+										/*step([$class: "RundeckNotifier",
+											  includeRundeckLogs: true,
+											  jobId: "${JobID}",
+											  nodeFilters: "",
+											  options: """
+													cluster: ${clusters[i]} 
+												""",
+											  rundeckInstance: "PROD-RUNDECK",
+											  shouldFailTheBuild: true,
+											  shouldWaitForRundeckJob: true,
+											  tags: "",
+											  tailLog: true]) */
 									}
-									stage("Content Deploy in Prod cluster: " + "${clusters[i]}")
-									{
-										echo "Job id is ${JobID}"
+									if (DeployContent == "Yes"){
+										stage("Content Deploy in Prod cluster: " + "${clusters[i]}")
+										{
+											echo "Job id is ${JobID}"
+											/*step([$class: "RundeckNotifier",
+											  includeRundeckLogs: true,
+											  jobId: "${JobID}",
+											  nodeFilters: "",
+											  options: """
+												cluster: ${clusters[i]} 
+												""",
+											  rundeckInstance: "PROD-RUNDECK",
+											  shouldFailTheBuild: true,
+											  shouldWaitForRundeckJob: true,
+											  tags: "",
+											  tailLog: true]) */
+										}
 									}
-									stage("Enable Traffic in Prod cluster: " + "${clusters[i]}")
-									{
-										echo "Job id is ${JobID}"
+									else{
+										echo "DeployContent didnt selected"
+									}
+									if (EnableTraffic == "Yes") {
+										stage("Enable Traffic in Prod cluster: " + "${TrafficClusterName}")
+										{
+											echo "RUNDECK Job id is ${TrafficJobID}"
+											/*step([$class: "RundeckNotifier",
+															  includeRundeckLogs: true,
+															  jobId: "${TrafficJobID}",
+															  nodeFilters: "",
+															  options: """
+																   operations=enableTraffic.sh
+																	cluster: ${TrafficClusterName}
+																""",
+															  rundeckInstance: "PROD-RUNDECK",
+															  shouldFailTheBuild: true,
+															  shouldWaitForRundeckJob: true,
+															  tags: "",
+															  tailLog: true])*/
+										}
+									}
+									else{
+										echo "EnableTraffic didnt selected"
 									}
 								}
+							}
+							catch (err){
+								echo "didnt selected any clusters so making this build failure"
+								currentBuild.result = 'FAILURE'
+							}
 						break;
 						case "DR":
 							String[] clusters= params.Cluster.split(',')
+							 try{
 								for (int i = 0; i < clusters.size(); i++)
 								{
 									for(element in DRCluster) {
@@ -204,31 +463,114 @@ node {
 											}
 											else echo "didn't selected ${element.key} cluster"
 									}
-									stage("Disable traffic in DR cluster: " + "${clusters[i]}")
+									
+									for(element in NetworkClusters) {
+										String[] eID= element.value.split(',')
+												if (eID.contains(clusters[i])){
+														echo "JobID is ${eID[0]}"
+														TrafficJobID = eID[0]
+														TrafficClusterName = element.key
+														echo "cluster name ${element.key}"
+													//for (int j = 0; j < eID.size(); j++){
+														//echo "JobID is ${eID[0]}"
+														//echo "eid ${eID[j]}"
+													//} 
+												}
+												else {
+												echo "didn't selected ${element.key} cluster"
+												}
+									}
+									stage("Disable traffic in DR cluster: " + "${TrafficClusterName}")
 									{
-										echo "Job id is ${JobID}"
+										echo "RUNDECK Job id is ${TrafficJobID}"
+										/*step([$class: "RundeckNotifier",
+														  includeRundeckLogs: true,
+														  jobId: "${TrafficJobID}",
+														  nodeFilters: "",
+														  options: """
+															   operations=disableTraffic.sh
+																cluster: ${TrafficClusterName}
+															""",
+														  rundeckInstance: "DR-RUNDECK",
+														  shouldFailTheBuild: true,
+														  shouldWaitForRundeckJob: true,
+														  tags: "",
+														  tailLog: true])*/
 									}
 									stage("Deploy in cluster in DR cluster: " + "${clusters[i]}")
 									{
 										echo "Job id is ${JobID}"
+										/*step([$class: "RundeckNotifier",
+											  includeRundeckLogs: true,
+											  jobId: "${JobID}",
+											  nodeFilters: "",
+											  options: """
+													cluster: ${clusters[i]} 
+												""",
+											  rundeckInstance: "DR-RUNDECK",
+											  shouldFailTheBuild: true,
+											  shouldWaitForRundeckJob: true,
+											  tags: "",
+											  tailLog: true]) */
 									}
-									stage("Content Deploy in DR cluster: " + "${clusters[i]}")
-									{
-										echo "Job id is ${JobID}"
+									if (DeployContent == "Yes"){
+										stage("Content Deploy in DR cluster: " + "${clusters[i]}")
+										{
+											echo "Job id is ${JobID}"
+											/*step([$class: "RundeckNotifier",
+											  includeRundeckLogs: true,
+											  jobId: "${JobID}",
+											  nodeFilters: "",
+											  options: """
+												cluster: ${clusters[i]} 
+												""",
+											  rundeckInstance: "DR-RUNDECK",
+											  shouldFailTheBuild: true,
+											  shouldWaitForRundeckJob: true,
+											  tags: "",
+											  tailLog: true]) */
+										}
 									}
-									stage("Enable Traffic in DR cluster: " + "${clusters[i]}")
-									{
-										echo "Job id is ${JobID}"
+									else{
+										echo "DeployContent didnt selected"
+									}
+									if (EnableTraffic == "Yes") {
+										stage("Enable Traffic in DR cluster: " + "${TrafficClusterName}")
+										{
+											echo "RUNDECK Job id is ${TrafficJobID}"
+											/*step([$class: "RundeckNotifier",
+															  includeRundeckLogs: true,
+															  jobId: "${TrafficJobID}",
+															  nodeFilters: "",
+															  options: """
+																   operations=enableTraffic.sh
+																	cluster: ${TrafficClusterName}
+																""",
+															  rundeckInstance: "DR-RUNDECK",
+															  shouldFailTheBuild: true,
+															  shouldWaitForRundeckJob: true,
+															  tags: "",
+															  tailLog: true])*/
+										}
+									}
+									else{
+										echo "EnableTraffic didnt selected"
 									}
 								}
+							}
+							catch (err){
+								echo "didnt selected any clusters so making this build failure"
+								currentBuild.result = 'FAILURE'
+							}
 						break;
 						default:
-						echo "Didn't selected any NetWorkClusterEnvironment..."
+						echo "Didn't selected any clusters so making this build failure."
+						currentBuild.result = 'FAILURE'
 						break;
 				}
 			break;
 			default:
-				echo "Invalid environment ERROR..."
+				echo "Invalid Environment ERROR..."
 				break;			
 					
 		}
